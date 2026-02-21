@@ -1,0 +1,8 @@
+# ===================================================================
+#                     阿里云对象存储 (OSS) 配置
+# ===================================================================
+oss:
+  bucket-name: img-zzy
+  end-point: oss-cn-beijing.aliyuncs.com
+  access-key: LTAI5t8JCV3qZAJhER4eDBBN
+  access-secret: gGUjHbs1gscr8Fj0lXD9XYx8SswNwS

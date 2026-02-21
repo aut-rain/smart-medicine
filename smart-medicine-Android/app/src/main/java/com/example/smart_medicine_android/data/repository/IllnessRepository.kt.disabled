@@ -1,0 +1,143 @@
+package com.example.smart_medicine_android.data.repository
+
+import com.example.smart_medicine_android.data.local.IllnessDao
+import com.example.smart_medicine_android.data.local.entity.toEntity
+import com.example.smart_medicine_android.data.network.SmartMedicineApiService
+import com.example.smart_medicine_android.util.Result
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
+import javax.inject.Singleton
+
+/**
+ * 疾病仓库
+ *
+ * 实现 offline-first 模式：本地数据库为数据源，网络同步数据
+ */
+@Singleton
+class IllnessRepository @Inject constructor(
+    private val apiService: SmartMedicineApiService,
+    private val illnessDao: IllnessDao
+) {
+    /**
+     * 获取所有疾病
+     * 优先从本地数据库获取，如果本地为空则从网络获取
+     */
+    fun getAllIllnesses(): Flow<Result<List<com.example.smart_medicine_android.data.local.entity.IllnessEntity>>> = flow {
+        emit(Result.Loading)
+        try {
+            // 先从本地获取
+            val localIllnesses = illnessDao.getAllIllnesses().first()
+            if (localIllnesses.isNotEmpty()) {
+                emit(Result.Success(localIllnesses))
+            } else {
+                // 本地为空，从网络获取
+                refreshIllnesses()
+                emit(Result.Success(illnessDao.getAllIllnesses().first()))
+            }
+        } catch (e: Exception) {
+            emit(Result.Error(exception = e, message = e.message))
+        }
+    }
+
+    /**
+     * 获取热门疾病
+     */
+    fun getHotIllnesses(limit: Int = 10): Flow<Result<List<com.example.smart_medicine_android.data.local.entity.IllnessEntity>>> = flow {
+        emit(Result.Loading)
+        try {
+            val localIllnesses = illnessDao.getHotIllnesses(limit).first()
+            if (localIllnesses.isNotEmpty()) {
+                emit(Result.Success(localIllnesses))
+            } else {
+                // 从网络获取
+                val response = apiService.getHotIllnesses(limit)
+                if (response.isSuccess && response.data != null) {
+                    val entities = response.data.map { it.toEntity() }
+                    illnessDao.upsertIllnesses(entities)
+                    emit(Result.Success(entities))
+                } else {
+                    emit(Result.Error(message = response.message))
+                }
+            }
+        } catch (e: Exception) {
+            emit(Result.Error(exception = e, message = e.message))
+        }
+    }
+
+    /**
+     * 根据ID获取疾病
+     */
+    fun getIllnessById(id: String): Flow<Result<com.example.smart_medicine_android.data.local.entity.IllnessEntity>> = flow {
+        emit(Result.Loading)
+        try {
+            val illness = illnessDao.getIllnessById(id).first()
+            if (illness != null) {
+                emit(Result.Success(illness))
+            } else {
+                // 从网络获取
+                val response = apiService.getIllnessDetail(id)
+                if (response.isSuccess && response.data != null) {
+                    val entity = response.data.toEntity()
+                    illnessDao.upsertIllness(entity)
+                    emit(Result.Success(entity))
+                } else {
+                    emit(Result.Error(message = response.message))
+                }
+            }
+        } catch (e: Exception) {
+            emit(Result.Error(exception = e, message = e.message))
+        }
+    }
+
+    /**
+     * 搜索疾病
+     */
+    fun searchIllnesses(keyword: String): Flow<Result<List<com.example.smart_medicine_android.data.local.entity.IllnessEntity>>> = flow {
+        emit(Result.Loading)
+        try {
+            val response = apiService.searchIllnesses(keyword)
+            if (response.isSuccess && response.data != null) {
+                val entities = response.data.map { it.toEntity() }
+                // 保存搜索结果到本地
+                illnessDao.upsertIllnesses(entities)
+                emit(Result.Success(entities))
+            } else {
+                // 如果网络失败，从本地搜索
+                val localResults = illnessDao.searchIllnesses(keyword).first()
+                if (localResults.isNotEmpty()) {
+                    emit(Result.Success(localResults))
+                } else {
+                    emit(Result.Error(message = response.message))
+                }
+            }
+        } catch (e: Exception) {
+            // 网络异常，从本地搜索
+            val localResults = illnessDao.searchIllnesses(keyword).first()
+            if (localResults.isNotEmpty()) {
+                emit(Result.Success(localResults))
+            } else {
+                emit(Result.Error(exception = e, message = e.message))
+            }
+        }
+    }
+
+    /**
+     * 刷新疾病数据（从网络同步）
+     */
+    suspend fun refreshIllnesses(): Result<Unit> {
+        return try {
+            val response = apiService.getHotIllnesses(100)
+            if (response.isSuccess && response.data != null) {
+                val entities = response.data.map { it.toEntity() }
+                illnessDao.upsertIllnesses(entities)
+                Result.Success(Unit)
+            } else {
+                Result.Error(message = response.message)
+            }
+        } catch (e: Exception) {
+            Result.Error(exception = e, message = e.message)
+        }
+    }
+}

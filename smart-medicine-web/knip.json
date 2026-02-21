@@ -1,0 +1,18 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "entry": ["src/main.tsx"],
+  "project": ["src/**/*.{ts,tsx}"],
+  "ignore": [
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/*.test.tsx",
+    "**/*.spec.tsx",
+    "vite.config.ts",
+    "tailwind.config.js"
+  ],
+  "ignoreDependencies": [
+    "@types/*",
+    "@vitejs/*",
+    "esbuild"
+  ]
+}

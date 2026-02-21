@@ -1,0 +1,27 @@
+# ===================================================================
+#                     邮件服务配置
+# ===================================================================
+
+# ------------------- Spring Mail 配置 -------------------
+spring:
+  mail:
+    host: smtp.qq.com
+    port: 465
+    protocol: smtps
+    username: 2545946621@qq.com
+    password: rtfdezhompwbechd
+    properties:
+      mail:
+        smtp:
+          ssl:
+            enable: true
+            protocols: TLSv1.2
+          auth: true
+          starttls:
+            enable: true
+    # 验证码有效期（分钟）
+    valid: 2
+    # 邮件标题
+    title: "寻药就医系统 - 用户认证"
+    # 邮件模板
+    template: "您的动态验证码为：<strong style='color: red'>%s</strong>，%d分钟内有效，若非本人操作，请勿泄露。"

@@ -1,0 +1,14 @@
+# JWT配置
+jwt:
+  # JWT密钥(生产环境请使用环境变量)
+  secret: smart-medicine-secret-key-for-jwt-token-generation-2025-very-long-secret
+  # Access Token过期时间(秒) - 2小时
+  expiration: 7200
+  # Refresh Token过期时间(秒) - 7天
+  refresh-expiration: 604800
+  # Token请求头名称
+  header: Authorization
+  # Token前缀
+  prefix: 'Bearer '
+  # Token签发者
+  issuer: zzy

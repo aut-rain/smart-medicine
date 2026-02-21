@@ -1,0 +1,43 @@
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+  group-configs:
+    - group: '1_default'
+      paths-to-match: '/**'
+      packages-to-scan: com.medical.smartmedicine
+    - group: 'auth-service'
+      paths-to-match: '/**'
+      packages-to-scan: com.medical.smartmedicine.auth.controller
+    - group: 'ai-service'
+      paths-to-match: '/**'
+      packages-to-scan: com.medical.smartmedicine.ai.controller
+    - group: 'feedback-service'
+      paths-to-match: '/**'
+      packages-to-scan: com.medical.smartmedicine.feedback.controller
+    - group: 'file-service'
+      paths-to-match: '/**'
+      packages-to-scan: com.medical.smartmedicine.file.controller
+    - group: 'illness-service'
+      paths-to-match: '/**'
+      packages-to-scan: com.medical.smartmedicine.illness.controller
+    - group: 'user-service'
+      paths-to-match: '/**'
+      packages-to-scan: com.medical.smartmedicine.user.controller
+    - group: 'history-service'
+      paths-to-match: '/**'
+      packages-to-scan: com.medical.smartmedicine.history.controller
+    - group: 'medicine-service'
+      paths-to-match: '/**'
+      packages-to-scan: com.medical.smartmedicine.medicine.controller
+    - group: 'sciencevideo-service'
+      paths-to-match: '/**'
+      packages-to-scan: com.medical.smartmedicine.sciencevideo.controller
+knife4j:
+  enable: true
+  setting:
+    language: zh_cn

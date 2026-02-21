@@ -1,0 +1,33 @@
+{
+  "name": "smart-medicine-web",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@ant-design/icons": "^6.1.0",
+    "@tailwindcss/vite": "^4.1.17",
+    "antd": "^5.18.4",
+    "axios": "^1.7.7",
+    "dayjs": "^1.11.13",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.26.2",
+    "streamdown": "^1.6.10"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.1",
+    "depcheck": "^1.4.7",
+    "knip": "^5.84.1",
+    "tailwindcss": "^4.1.17",
+    "ts-prune": "^0.10.3",
+    "typescript": "~5.9.3",
+    "vite": "5.4.8"
+  }
+}

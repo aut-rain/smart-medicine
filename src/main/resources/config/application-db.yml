@@ -1,0 +1,27 @@
+# ===================================================================
+#                     数据库与持久层配置
+# ===================================================================
+spring:
+  # ------------------- 数据源配置 -------------------
+  datasource:
+    username: root
+    password: ZHU20030901
+    url: jdbc:mysql://localhost:3306/smart-medicine?useUnicode=true&allowPublicKeyRetrieval=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+
+# ------------------- MyBatis-Plus 配置 -------------------
+mybatis-plus:
+  configuration:
+    # 开发环境打印SQL日志
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+  mapper-locations:
+    - classpath:mapper/*.xml
+    - classpath:com/medical/smartmedicine/mapper/**/*.xml
+  type-aliases-package: com.medical.smartmedicine.model.entity
+
+# ------------------- 日志配置 -------------------
+logging:
+  level:
+    # 设置 Mapper 接口的日志级别为 WARN
+    world.zzy.dao.mapper: WARN

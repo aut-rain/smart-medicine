@@ -1,0 +1,83 @@
+package com.example.smart_medicine_android.data.local
+
+import android.content.Context
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import com.example.smart_medicine_android.data.local.entity.UserEntity
+import com.example.smart_medicine_android.data.local.entity.IllnessEntity
+import com.example.smart_medicine_android.data.local.entity.MedicineEntity
+import com.example.smart_medicine_android.data.local.entity.crossRef.IllnessMedicineCrossRef
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
+
+/**
+ * 数据库配置
+ *
+ * Room 数据库定义和依赖注入配置
+ */
+@Module
+@InstallIn(SingletonComponent::class)
+object DatabaseModule {
+
+    private const val DATABASE_NAME = "smart_medicine_db"
+
+    @Provides
+    @Singleton
+    fun provideDatabase(
+        @ApplicationContext context: Context
+    ): SmartMedicineDatabase {
+        return Room.databaseBuilder(
+            context,
+            SmartMedicineDatabase::class.java,
+            DATABASE_NAME
+        )
+            .fallbackToDestructiveMigration() // 开发阶段使用，生产环境需要提供 Migration
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserDao(database: SmartMedicineDatabase): UserDao {
+        return database.userDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideIllnessDao(database: SmartMedicineDatabase): IllnessDao {
+        return database.illnessDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideMedicineDao(database: SmartMedicineDatabase): MedicineDao {
+        return database.medicineDao()
+    }
+}
+
+/**
+ * 智慧医疗数据库
+ *
+ * @entities 数据库表实体类
+ * @version 数据库版本号
+ * @exportSchema 是否导出数据库 schema
+ */
+@Database(
+    entities = [
+        UserEntity::class,
+        IllnessEntity::class,
+        MedicineEntity::class,
+        IllnessMedicineCrossRef::class
+    ],
+    version = 1,
+    exportSchema = false
+)
+abstract class SmartMedicineDatabase : RoomDatabase() {
+    abstract fun userDao(): UserDao
+    abstract fun illnessDao(): IllnessDao
+    abstract fun medicineDao(): MedicineDao
+}

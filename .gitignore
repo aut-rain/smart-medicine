@@ -1,0 +1,178 @@
+# ===================================================================
+#                        Smart Medicine - .gitignore
+#          Spring Boot Backend + React Frontend + Android App
+# ===================================================================
+
+# ----------------------------------------------------------------------
+# Operating System Files
+# ----------------------------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# ----------------------------------------------------------------------
+# IDE / Editor Files
+# ----------------------------------------------------------------------
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# ----------------------------------------------------------------------
+# Spring Boot Backend (Java/Maven)
+# ----------------------------------------------------------------------
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+hs_err_pid*
+*.log
+*.log.*
+
+# Maven
+.mvn/wrapper/maven-wrapper.jar
+
+# ----------------------------------------------------------------------
+# React Frontend (Node.js / Vite)
+# ----------------------------------------------------------------------
+node_modules/
+dist/
+dist-ssr/
+*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Build outputs
+build/
+.cache/
+
+# ----------------------------------------------------------------------
+# Android App
+# ----------------------------------------------------------------------
+gradle-wrapper.jar
+.gradle/
+build/
+captures/
+.externalNativeBuild
+.cxx/
+
+# Android Studio
+local.properties
+*.iml
+*.apk
+*.aab
+*.ap_
+*.dex
+
+# Signing files (IMPORTANT: Never commit signing keys!)
+.jks
+.keystore
+*.jks
+*.keystore
+
+# Android Profiling
+*.hprof
+
+# Android generated files
+gen/
+out/
+release/
+
+# ----------------------------------------------------------------------
+# Database / Data Files
+# ----------------------------------------------------------------------
+*.db
+*.sqlite
+*.sqlite3
+
+# ----------------------------------------------------------------------
+# Logs
+# ----------------------------------------------------------------------
+logs/
+*.log
+log/
+
+# ----------------------------------------------------------------------
+# Temporary Files
+# ----------------------------------------------------------------------
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*~.nib
+
+# ----------------------------------------------------------------------
+# Sensitive Information (NEVER COMMIT THESE!)
+# ----------------------------------------------------------------------
+# API Keys
+api-key.txt
+secrets.yml
+application-prod.yml
+application-secret.yml
+
+# Config files with secrets (commented out examples - adjust as needed)
+# src/main/resources/application-dev.yml
+# src/main/resources/application-prod.yml
+# smart-medicine-web/.env.production
+
+# ----------------------------------------------------------------------
+# Test Coverage Reports
+# ----------------------------------------------------------------------
+coverage/
+.nyc_output/
+lcov.info
+*.lcov
+
+# ----------------------------------------------------------------------
+# Documentation Generated Files
+# ----------------------------------------------------------------------
+javadoc/
+
+# ----------------------------------------------------------------------
+# Package Manager Lock Files (Optional - uncomment if needed)
+# ----------------------------------------------------------------------
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# ----------------------------------------------------------------------
+# Misc
+#----------------------------------------------------------------------
+.cache/
+.parcel-cache/
+.next/
+.nuxt/
+.vuepress/dist/
+.serverless/
+.fusebox/
+.dynamodb/
+.tern-port
+.yarn-integrity
+.eslintcache

@@ -1,0 +1,21 @@
+# ===================================================================
+#                     主配置文件
+# ===================================================================
+spring:
+  application:
+    name: smart-medicine
+  profiles:
+    active: dev # 激活开发环境配置
+  config:
+    import:
+      - "classpath:config/application-db.yml"
+      - "classpath:config/application-redis.yml"
+      - "classpath:config/application-mail.yml"
+      - "classpath:config/application-oss.yml"
+      - "classpath:config/application-ai.yml"
+      - "classpath:config/application-jwt.yml"
+      - "classpath:config/application-swagger.yml"
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB

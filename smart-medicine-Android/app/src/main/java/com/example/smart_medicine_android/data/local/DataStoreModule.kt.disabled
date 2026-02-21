@@ -1,0 +1,170 @@
+package com.example.smart_medicine_android.data.local
+
+import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import javax.inject.Singleton
+import javax.inject.Qualifier
+
+/**
+ * DataStore 配置模块
+ *
+ * 用于存储用户偏好设置和 Token
+ */
+@Module
+@InstallIn(SingletonComponent::class)
+object DataStoreModule {
+
+    @Provides
+    @Singleton
+    fun provideUserDataStore(@ApplicationContext context: Context): DataStore<Preferences> {
+        return context.dataStore
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserPreferencesManager(dataStore: DataStore<Preferences>): UserPreferencesManager {
+        return UserPreferencesManager(dataStore)
+    }
+}
+
+/**
+ * DataStore 扩展属性
+ */
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "user_preferences")
+
+/**
+ * 用户偏好管理器
+ *
+ * 管理用户登录状态、Token 等信息
+ */
+class UserPreferencesManager(
+    private val dataStore: DataStore<Preferences>
+) {
+    companion object {
+        private val ACCESS_TOKEN_KEY = stringPreferencesKey("access_token")
+        private val REFRESH_TOKEN_KEY = stringPreferencesKey("refresh_token")
+        private val IS_LOGGED_IN_KEY = booleanPreferencesKey("is_logged_in")
+        private val USER_ID_KEY = stringPreferencesKey("user_id")
+        private val USER_ACCOUNT_KEY = stringPreferencesKey("user_account")
+    }
+
+    // ============================================
+    // Token 管理
+    // ============================================
+
+    /**
+     * 获取访问 Token
+     */
+    val accessToken: Flow<String?> = dataStore.data.map { preferences ->
+        preferences[ACCESS_TOKEN_KEY]
+    }
+
+    /**
+     * 保存访问 Token
+     */
+    suspend fun saveAccessToken(token: String) {
+        dataStore.edit { preferences ->
+            preferences[ACCESS_TOKEN_KEY] = token
+            preferences[IS_LOGGED_IN_KEY] = true
+        }
+    }
+
+    /**
+     * 获取刷新 Token
+     */
+    val refreshToken: Flow<String?> = dataStore.data.map { preferences ->
+        preferences[REFRESH_TOKEN_KEY]
+    }
+
+    /**
+     * 保存刷新 Token
+     */
+    suspend fun saveRefreshToken(token: String) {
+        dataStore.edit { preferences ->
+            preferences[REFRESH_TOKEN_KEY] = token
+        }
+    }
+
+    /**
+     * 保存 Token 对
+     */
+    suspend fun saveTokens(accessToken: String, refreshToken: String) {
+        dataStore.edit { preferences ->
+            preferences[ACCESS_TOKEN_KEY] = accessToken
+            preferences[REFRESH_TOKEN_KEY] = refreshToken
+            preferences[IS_LOGGED_IN_KEY] = true
+        }
+    }
+
+    /**
+     * 清除 Token（登出时使用）
+     */
+    suspend fun clearTokens() {
+        dataStore.edit { preferences ->
+            preferences.remove(ACCESS_TOKEN_KEY)
+            preferences.remove(REFRESH_TOKEN_KEY)
+            preferences[IS_LOGGED_IN_KEY] = false
+            preferences.remove(USER_ID_KEY)
+            preferences.remove(USER_ACCOUNT_KEY)
+        }
+    }
+
+    // ============================================
+    // 登录状态
+    // ============================================
+
+    /**
+     * 获取登录状态
+     */
+    val isLoggedIn: Flow<Boolean> = dataStore.data.map { preferences ->
+        preferences[IS_LOGGED_IN_KEY] ?: false
+    }
+
+    // ============================================
+    // 用户信息
+    // ============================================
+
+    /**
+     * 获取用户 ID
+     */
+    val userId: Flow<String?> = dataStore.data.map { preferences ->
+        preferences[USER_ID_KEY]
+    }
+
+    /**
+     * 保存用户 ID
+     */
+    suspend fun saveUserId(userId: String) {
+        dataStore.edit { preferences ->
+            preferences[USER_ID_KEY] = userId
+        }
+    }
+
+    /**
+     * 获取用户账号
+     */
+    val userAccount: Flow<String?> = dataStore.data.map { preferences ->
+        preferences[USER_ACCOUNT_KEY]
+    }
+
+    /**
+     * 保存用户账号
+     */
+    suspend fun saveUserAccount(account: String) {
+        dataStore.edit { preferences ->
+            preferences[USER_ACCOUNT_KEY] = account
+        }
+    }
+}
