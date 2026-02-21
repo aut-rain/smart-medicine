@@ -1,13 +1,20 @@
 package com.example.smart_medicine_android
 
 import android.app.Application
+import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.example.smart_medicine_android.di.AppModule
+import com.example.smart_medicine_android.worker.DataSyncWorker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.flow.firstOrNull
+import java.util.concurrent.TimeUnit
 
 /**
  * 智慧医疗 Application 类
@@ -29,6 +36,9 @@ class SmartMedicineApplication : Application() {
 
         // 预热所有lazy初始化的依赖，并加载用户数据到缓存
         preloadDependencies()
+
+        // 启动数据同步
+        startDataSync()
     }
 
     /**
@@ -70,6 +80,46 @@ class SmartMedicineApplication : Application() {
                 android.util.Log.e("SmartMedicineApp", "Error preloading dependencies", e)
                 // 预加载失败不影响应用运行，lazy初始化会在首次访问时重试
             }
+        }
+    }
+
+    /**
+     * 启动数据同步
+     * 1. 应用启动时立即同步一次
+     * 2. 每10分钟自动同步一次
+     */
+    private fun startDataSync() {
+        try {
+            val workManager = WorkManager.getInstance(this)
+
+            // 1. 应用启动时立即同步
+            val syncRequest = OneTimeWorkRequestBuilder<DataSyncWorker>()
+                .setConstraints(
+                    Constraints.Builder()
+                        .setRequiredNetworkType(androidx.work.NetworkType.CONNECTED) // 需要网络
+                        .build()
+                )
+                .build()
+            workManager.enqueue(syncRequest)
+            android.util.Log.d("SmartMedicineApp", "启动时数据同步任务已调度")
+
+            // 2. 每10分钟自动同步
+            val periodicRequest = PeriodicWorkRequestBuilder<DataSyncWorker>(10L, TimeUnit.MINUTES)
+                .setConstraints(
+                    Constraints.Builder()
+                        .setRequiredNetworkType(androidx.work.NetworkType.CONNECTED)
+                        .build()
+                )
+                .build()
+            workManager.enqueueUniquePeriodicWork(
+                "periodic_data_sync",
+                ExistingPeriodicWorkPolicy.REPLACE, // 如果已存在则替换
+                periodicRequest
+            )
+            android.util.Log.d("SmartMedicineApp", "定时数据同步任务已调度: 间隔10分钟")
+
+        } catch (e: Exception) {
+            android.util.Log.e("SmartMedicineApp", "启动数据同步失败", e)
         }
     }
 }

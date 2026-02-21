@@ -12,7 +12,6 @@ val BackgroundCard = Color(0xFFFFFFFF)         // 卡片背景
 val PrimaryBlue = Color(0xFF2563EB)           // 科技蓝主色
 val PrimaryBlueLight = Color(0xFF3B82F6)       // 亮蓝
 val PrimaryBlueDark = Color(0xFF1E40AF)        // 深蓝
-val PrimaryPurple = Color(0xFF7C3AED)          // 深紫色
 
 // 辅助色
 val AccentCyan = Color(0xFF06B6D4)            // 青色高亮
@@ -36,20 +35,3 @@ val InfoBlue = Color(0xFF3B82F6)              // 信息蓝
 
 // 阴影/投影
 val CardShadow = Color(0x0A000000)            // 卡片阴影（5% 不透明度）
-val HoverShadow = Color(0x0D000000)           // 悬浮阴影
-
-// 渐变色
-val GradientBlue = listOf(
-    Color(0xFF2563EB),
-    Color(0xFF3B82F6)
-)
-
-val GradientPurple = listOf(
-    Color(0xFF7C3AED),
-    Color(0xFF8B5CF6)
-)
-
-val GradientCyan = listOf(
-    Color(0xFF06B6D4),
-    Color(0xFF22D3EE)
-)

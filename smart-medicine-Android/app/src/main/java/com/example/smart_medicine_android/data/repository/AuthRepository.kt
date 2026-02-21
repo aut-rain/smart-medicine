@@ -124,9 +124,18 @@ class AuthRepository(
      */
     suspend fun sendVerificationCode(email: String): Result<Unit> {
         return try {
-            // TODO: 实现发送验证码的API调用
-            Result.success(Unit)
+            android.util.Log.d("AuthRepository", "发送邮箱验证码: email=$email")
+            val response = authApi.sendEmailCode(email)
+            if (response.isSuccess) {
+                android.util.Log.d("AuthRepository", "验证码发送成功")
+                Result.success(Unit)
+            } else {
+                val error = ApiException(response.code ?: "UNKNOWN", response.message ?: "Unknown error")
+                android.util.Log.e("AuthRepository", "验证码发送失败: $error")
+                Result.failure(error)
+            }
         } catch (e: Exception) {
+            android.util.Log.e("AuthRepository", "发送验证码异常", e)
             Result.failure(e)
         }
     }

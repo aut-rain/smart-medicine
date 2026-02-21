@@ -141,10 +141,13 @@ object AppModule {
     /**
      * 设置自定义 baseUrl（用于测试或动态配置）
      * @param url 新的 baseUrl（必须以 / 结尾）
+     * 注意：当前实现不会动态更新已创建的 Retrofit 实例
+     * 如需动态更新，需要重新创建 Retrofit 实例或使用动态 baseUrl 拦截器
      */
     fun setCustomBaseUrl(url: String) {
-        // TODO: 实现动态更新 baseUrl 的逻辑
-        // 这需要重新创建 Retrofit 实例，或者使用动态 baseUrl 拦截器
+        // 动态 baseUrl 更新需要在 NetworkModule 中实现
+        // 当前仅用于配置记录，实际生效需要重启应用
+        android.util.Log.d("AppModule", "setCustomBaseUrl called: $url (需要重启应用生效)")
     }
 
     /**

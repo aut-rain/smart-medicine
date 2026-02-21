@@ -36,6 +36,8 @@ import com.example.smart_medicine_android.ui.screen.profile.EditProfileScreen
 import com.example.smart_medicine_android.ui.screen.profile.ChangePasswordScreen
 import com.example.smart_medicine_android.ui.theme.*
 import com.example.smart_medicine_android.ui.navigation.ModernBottomNavigation
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.smart_medicine_android.ui.screen.home.HomeViewModel
 
 /**
  * 应用导航主机（带底部导航栏）
@@ -46,6 +48,8 @@ fun AppNavHost(
     modifier: Modifier = Modifier,
     startDestination: String = Screen.Home.route
 ) {
+    val homeViewModel: HomeViewModel = viewModel()
+
     // 当前选中的底部导航项
     var selectedRoute by remember { mutableStateOf(startDestination) }
 
@@ -76,6 +80,10 @@ fun AppNavHost(
                         navController.navigate(route) {
                             popUpTo(route) { inclusive = true }
                         }
+                    },
+                    onHomeDoubleTap = {
+                        // 双击首页图标触发数据同步
+                        homeViewModel.syncData()
                     }
                 )
             }
@@ -122,7 +130,8 @@ fun AppNavHost(
                     },
                     onMedicineClick = { medicineId ->
                         navController.navigate(Screen.MedicineDetail.createRoute(medicineId))
-                    }
+                    },
+                    viewModel = homeViewModel
                 )
             }
 
@@ -155,7 +164,10 @@ fun AppNavHost(
                 val illnessId = backStackEntry.arguments?.getInt("illnessId") ?: 0
                 IllnessDetailScreen(
                     illnessId = illnessId,
-                    onBackClick = { navController.popBackStack() }
+                    onBackClick = { navController.popBackStack() },
+                    onMedicineClick = { medicineId ->
+                        navController.navigate(Screen.MedicineDetail.createRoute(medicineId))
+                    }
                 )
             }
 

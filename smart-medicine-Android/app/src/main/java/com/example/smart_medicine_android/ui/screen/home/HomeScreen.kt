@@ -8,8 +8,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -49,9 +52,44 @@ fun HomeScreen(
     viewModel: HomeViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val isRefreshing by remember { derivedStateOf { uiState.isRefreshing } }
+    val snackbarHostState = remember { SnackbarHostState() }
+
     // 搜索类型和选中标签页同步：0=疾病, 1=药品
     var searchType by remember { mutableIntStateOf(0) }
     val tabs = listOf("热门疾病", "常用药品")
+
+    // 监听成功消息变化并显示
+    LaunchedEffect(uiState.successMessage) {
+        uiState.successMessage?.let { message ->
+            val result = snackbarHostState.showSnackbar(
+                message = message,
+                duration = SnackbarDuration.Short,
+                withDismissAction = true
+            )
+            when (result) {
+                SnackbarResult.Dismissed, SnackbarResult.ActionPerformed -> {
+                    viewModel.clearSuccessMessage()
+                }
+            }
+        }
+    }
+
+    // 监听错误消息变化并显示
+    LaunchedEffect(uiState.errorMessage) {
+        uiState.errorMessage?.let { message ->
+            val result = snackbarHostState.showSnackbar(
+                message = message,
+                duration = SnackbarDuration.Indefinite,
+                withDismissAction = true
+            )
+            when (result) {
+                SnackbarResult.Dismissed, SnackbarResult.ActionPerformed -> {
+                    viewModel.clearError()
+                }
+            }
+        }
+    }
 
     // 当搜索类型改变时，同时也改变选中的标签页
     fun onSearchTypeChange(newType: Int) {
@@ -72,26 +110,63 @@ fun HomeScreen(
                 HomeTopBar(
                     onConsultationClick = onConsultationClick
                 )
+            },
+            snackbarHost = {
+                SnackbarHost(
+                    hostState = snackbarHostState,
+                    snackbar = { snackbarData ->
+                        val isError = uiState.errorMessage != null
+                        Card(
+                            shape = RoundedCornerShape(12.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = if (isError) ErrorRed else SuccessGreen
+                            ),
+                            modifier = Modifier.padding(16.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(12.dp),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = if (isError) Icons.Default.ErrorOutline else Icons.Default.CheckCircle,
+                                    contentDescription = null,
+                                    tint = Color.White,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                                Text(
+                                    text = snackbarData.visuals.message,
+                                    color = Color.White
+                                )
+                            }
+                        }
+                    }
+                )
             }
         ) { paddingValues ->
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentPadding = PaddingValues(
-                    top = paddingValues.calculateTopPadding(),
-                    bottom = 80.dp // 为底部导航栏留出空间
-                )
+            PullToRefreshBox(
+                isRefreshing = isRefreshing,
+                onRefresh = { viewModel.refresh() },
+                modifier = Modifier.fillMaxSize()
             ) {
-                // ==================== 搜索栏（带类型筛选）====================
-                item {
-                    SearchBarWithFilter(
-                        query = uiState.searchQuery,
-                        searchType = searchType,
-                        onQueryChange = { viewModel.search(it, searchType) },
-                        onSearchTypeChange = { onSearchTypeChange(it) },
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentPadding = PaddingValues(
+                        top = paddingValues.calculateTopPadding(),
+                        bottom = 80.dp // 为底部导航栏留出空间
                     )
-                }
+                ) {
+                    // ==================== 搜索栏（带类型筛选）====================
+                    item {
+                        SearchBarWithFilter(
+                            query = uiState.searchQuery,
+                            searchType = searchType,
+                            onQueryChange = { viewModel.search(it, searchType) },
+                            onSearchTypeChange = { onSearchTypeChange(it) },
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                        )
+                    }
 
                 // ==================== 标签切换 ====================
                 item {
@@ -212,17 +287,7 @@ fun HomeScreen(
                         }
                     }
                 }
-
-                // ==================== 错误提示 ====================
-                uiState.errorMessage?.let { error ->
-                    item {
-                        ErrorSnackBar(
-                            message = error,
-                            onDismiss = viewModel::clearError,
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                        )
-                    }
-                }
+            }
             }
         }
     }
@@ -555,7 +620,7 @@ private fun DiseaseCard(
                     color = TextTertiary
                 )
                 Icon(
-                    imageVector = Icons.Default.KeyboardArrowRight,
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     contentDescription = "查看详情",
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(18.dp)
@@ -668,7 +733,7 @@ private fun MedicineCard(
                     }
                 } ?: Spacer(modifier = Modifier.width(40.dp))
                 Icon(
-                    imageVector = Icons.Default.KeyboardArrowRight,
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     contentDescription = "查看详情",
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(18.dp)
@@ -727,35 +792,3 @@ private fun EmptyState(message: String = "暂无数据") {
     }
 }
 
-// ==================== 错误提示 ====================
-
-@Composable
-private fun ErrorSnackBar(
-    message: String,
-    onDismiss: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Snackbar(
-        modifier = modifier,
-        shape = RoundedCornerShape(12.dp),
-        containerColor = ErrorRed,
-        contentColor = Color.White,
-        action = {
-            TextButton(onClick = onDismiss) {
-                Text("关闭", color = Color.White)
-            }
-        }
-    ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = Icons.Default.ErrorOutline,
-                contentDescription = null,
-                modifier = Modifier.size(20.dp)
-            )
-            Text(message)
-        }
-    }
-}

@@ -18,7 +18,10 @@ export interface RegisterDTO {
 
 export const authService = {
   sendEmailCode(email: string) {
-    return http.post('/api/v1/auth/email-code', null, { params: { email } })
+    // 使用URLSearchParams构建query参数
+    const params = new URLSearchParams()
+    params.append('email', email)
+    return http.post(`/api/v1/auth/email-code?${params.toString()}`)
   },
   login(data: LoginDTO) {
     return http.post('/api/v1/auth/login', data)
