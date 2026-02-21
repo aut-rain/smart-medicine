@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.delay
 
 /**
  * 登录页面状态
@@ -20,7 +21,8 @@ data class LoginUiState(
     val account: String = "",
     val email: String = "",
     val password: String = "",
-    val verificationCode: String = ""
+    val verificationCode: String = "",
+    val countdown: Int = 0  // 验证码倒计时（秒）
 )
 
 /**
@@ -86,21 +88,44 @@ class LoginViewModel(
             return
         }
 
+        if (_uiState.value.countdown > 0) {
+            // 倒计时中，不允许重复发送
+            return
+        }
+
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
 
             val result = authRepository.sendVerificationCode(email)
 
             result.onSuccess {
+                android.util.Log.d("LoginViewModel", "验证码发送成功")
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    errorMessage = null
+                    errorMessage = null,
+                    countdown = 60  // 开始60秒倒计时
                 )
+                // 启动倒计时
+                startCountdown()
             }.onFailure { error ->
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     errorMessage = error.message ?: "发送验证码失败"
                 )
+            }
+        }
+    }
+
+    /**
+     * 启动倒计时
+     */
+    private fun startCountdown() {
+        viewModelScope.launch {
+            var remaining = _uiState.value.countdown
+            while (remaining > 0) {
+                delay(1000)
+                remaining--
+                _uiState.value = _uiState.value.copy(countdown = remaining)
             }
         }
     }

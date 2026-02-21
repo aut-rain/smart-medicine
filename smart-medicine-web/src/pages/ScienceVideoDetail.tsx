@@ -1,7 +1,9 @@
 import { Card, Space, Typography, Divider } from 'antd'
 import { useEffect, useState } from 'react'
 import { scienceVideoService } from '@/services/scienceVideoService'
+import { historyService } from '@/services/historyService'
 import { useParams } from 'react-router-dom'
+import { getUserId } from '@/utils/auth'
 import PageHeader from '@/components/PageHeader'
 
 export default function ScienceVideoDetail() {
@@ -18,7 +20,16 @@ export default function ScienceVideoDetail() {
     setLoading(true)
     try {
       const res = await scienceVideoService.getDetail(videoId)
-      setVideo(res.data?.data)
+      const videoData = res.data?.data
+      setVideo(videoData)
+
+      // 异步记录浏览历史
+      const userId = getUserId()
+      if (userId && videoData) {
+        historyService.record(userId, 5, videoData.id, videoData.title).catch((err) => {
+          console.warn('记录浏览历史失败:', err)
+        })
+      }
     } catch (error) {
       console.error('加载视频详情失败', error)
     } finally {
@@ -40,7 +51,7 @@ export default function ScienceVideoDetail() {
     <div className="page">
       <Space direction="vertical" style={{ width: '100%' }} size="large">
         <PageHeader title="视频详情" />
-        
+
         <Card loading={loading}>
           {video && (
             <Space direction="vertical" style={{ width: '100%' }} size="middle">
@@ -54,27 +65,27 @@ export default function ScienceVideoDetail() {
                   </Typography.Text>
                 </Space>
               </div>
-              
+
               <Divider />
-              
+
               {/* 视频播放区域 */}
-              <div style={{ 
-                width: '100%', 
-                backgroundColor: '#000', 
+              <div style={{
+                width: '100%',
+                backgroundColor: '#000',
                 borderRadius: 8,
                 overflow: 'hidden'
               }}>
                 {video.link ? (
-                  <video 
-                    src={video.link} 
-                    controls 
+                  <video
+                    src={video.link}
+                    controls
                     style={{ width: '100%', height: 'auto' }}
                   />
                 ) : (
-                  <div style={{ 
-                    height: 400, 
-                    display: 'flex', 
-                    alignItems: 'center', 
+                  <div style={{
+                    height: 400,
+                    display: 'flex',
+                    alignItems: 'center',
                     justifyContent: 'center',
                     color: '#fff'
                   }}>
@@ -82,9 +93,9 @@ export default function ScienceVideoDetail() {
                   </div>
                 )}
               </div>
-              
+
               <Divider />
-              
+
               {/* 视频介绍 */}
               <Card size="small" title="视频介绍">
                 <Typography.Paragraph>

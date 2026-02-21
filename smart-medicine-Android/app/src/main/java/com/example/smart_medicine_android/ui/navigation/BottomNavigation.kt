@@ -39,11 +39,14 @@ sealed class BottomNavItem(
 /**
  * 底部导航栏组件
  * 现代极简风格：白色背景、更大更清晰的图标、优雅的间距
+ *
+ * @param onHomeDoubleTap 双击首页图标时的回调（触发数据同步）
  */
 @Composable
 fun ModernBottomNavigation(
     currentRoute: String,
     onNavigate: (String) -> Unit,
+    onHomeDoubleTap: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     val items = listOf(
@@ -68,10 +71,13 @@ fun ModernBottomNavigation(
         ) {
             items.forEach { item ->
                 val selected = currentRoute == item.route
+                val isHome = item is BottomNavItem.Home
+
                 BottomNavItem(
                     item = item,
                     selected = selected,
-                    onClick = { onNavigate(item.route) }
+                    onClick = { onNavigate(item.route) },
+                    onHomeDoubleTap = if (isHome) onHomeDoubleTap else null
                 )
             }
         }
@@ -85,11 +91,32 @@ fun ModernBottomNavigation(
 private fun BottomNavItem(
     item: BottomNavItem,
     selected: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onHomeDoubleTap: (() -> Unit)? = null
 ) {
+    // 双击检测（仅用于首页）
+    var lastClickTime by remember { mutableLongStateOf(0L) }
+    val doubleClickTimeout = 300L // 双击间隔300毫秒
+
+    val handleClick = {
+        if (onHomeDoubleTap != null) {
+            val currentTime = System.currentTimeMillis()
+            if (currentTime - lastClickTime < doubleClickTimeout && selected) {
+                // 双击首页图标且当前已经在首页
+                onHomeDoubleTap()
+                lastClickTime = 0L
+            } else {
+                onClick()
+                lastClickTime = currentTime
+            }
+        } else {
+            onClick()
+        }
+    }
+
     Column(
         modifier = Modifier
-            .clickable(onClick = onClick)
+            .clickable(onClick = { handleClick() })
             .padding(vertical = 4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(4.dp)

@@ -182,21 +182,27 @@ public enum ErrorCodeEnum {
      */
     FILE_DELETE_FAILED("8007", "文件删除失败"),
 
-    // ==================== AI聊天相关 9xxx ====================
+    // ==================== 医疗资讯相关 9xxx ====================
+    /**
+     * 资讯不存在
+     */
+    NEWS_NOT_FOUND("9001", "资讯不存在"),
+
+    // ==================== AI聊天相关 91xx ====================
     /**
      * 消息内容不能为空
      */
-    MESSAGE_CONTENT_EMPTY("9001", "消息内容不能为空"),
-    
+    MESSAGE_CONTENT_EMPTY("9101", "消息内容不能为空"),
+
     /**
      * AI服务不可用
      */
-    AI_SERVICE_UNAVAILABLE("9002", "AI服务暂时不可用,请稍后重试"),
-    
+    AI_SERVICE_UNAVAILABLE("9102", "AI服务暂时不可用,请稍后重试"),
+
     /**
      * 会话ID不能为空
      */
-    SESSION_ID_EMPTY("9003", "会话ID不能为空");
+    SESSION_ID_EMPTY("9103", "会话ID不能为空");
 
     /**
      * 错误码

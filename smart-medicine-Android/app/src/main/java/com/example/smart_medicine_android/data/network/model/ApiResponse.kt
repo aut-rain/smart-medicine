@@ -333,3 +333,42 @@ data class FileUploadResponse(
     val fileType: String? = null,
     val uploadTime: Long? = null
 )
+
+// ==================== 资讯相关 ====================
+
+/**
+ * 资讯信息
+ * 对应后端的 NewsVO
+ */
+@Serializable
+data class NewsDto(
+    val id: Int? = null,
+    val newsName: String? = null,
+    val newsSummary: String? = null,
+    val coverOssPath: String? = null,
+    val category: String? = null,
+    val author: String? = null,
+    val status: Int? = null,
+    val viewCount: Int? = null,
+    val createTime: String? = null
+)
+
+/**
+ * 资讯详情
+ * 对应后端的 NewsDetailVO
+ */
+@Serializable
+data class NewsDetailDto(
+    val id: Int? = null,
+    val newsName: String? = null,
+    val newsSummary: String? = null,
+    val coverOssPath: String? = null,
+    val markdownContent: String? = null,
+    val category: String? = null,
+    val author: String? = null,
+    val status: Int? = null,
+    val viewCount: Int? = null,
+    val createTime: String? = null,
+    val updateTime: String? = null,
+    val relatedNews: List<NewsDto>? = null
+)

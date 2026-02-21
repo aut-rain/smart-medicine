@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.smart_medicine_android.data.repository.HistoryRepository
 import com.example.smart_medicine_android.data.repository.IllnessRepository
 import com.example.smart_medicine_android.di.AppModule
-import com.example.smart_medicine_android.data.network.model.IllnessDto
+import com.example.smart_medicine_android.data.network.model.IllnessDetailDto
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
  */
 data class IllnessDetailUiState(
     val isLoading: Boolean = false,
-    val illness: IllnessDto? = null,
+    val illness: IllnessDetailDto? = null,
     val errorMessage: String? = null
 )
 

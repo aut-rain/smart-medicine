@@ -1,10 +1,9 @@
 # 智慧医疗系统
 
 <div align="center">
-
 **一个现代化的全栈智慧医疗健康管理平台**
 
-[\![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+![LICENSE](https://img.shields.io/badge/License-MIT-yellow.svg)
 
 </div>
 
@@ -79,20 +78,58 @@ cd src
 mvn spring-boot:run
 ```
 
+**服务地址**: http://localhost:8080
+**API文档**: http://localhost:8080/doc.html
+
 ### 前端启动
 
 ```bash
 cd smart-medicine-web
 npm install
-npm start
+npm run dev
 ```
+
+**开发服务器**: http://localhost:5173
 
 ### Android 构建
 
 ```bash
 cd smart-medicine-Android
 ./gradlew assembleDebug
+./gradlew installDebug
 ```
+
+详细说明请参考：[smart-medicine-Android/README.md](smart-medicine-Android/README.md)
+
+
+## 📝 常用命令参考
+
+### 后端 (Maven)
+
+| 命令 | 说明 |
+|------|------|
+| `mvn spring-boot:run` | 启动开发服务器 |
+| `mvn clean package` | 清理并构建 JAR |
+| `mvn test` | 运行单元测试 |
+| `mvn clean` | 清理构建缓存 |
+
+### 前端 (NPM)
+
+| 命令 | 说明 |
+|------|------|
+| `npm run dev` | 启动开发服务器 |
+| `npm run build` | 构建生产版本 |
+| `npm run preview` | 预览生产构建 |
+
+### Android (Gradle)
+
+| 命令 | 说明 |
+|------|------|
+| `./gradlew assembleDebug` | 构建调试版本APK |
+| `./gradlew assembleRelease` | 构建发布版本APK |
+| `./gradlew installDebug` | 安装到设备 |
+| `./gradlew clean` | 清理构建缓存 |
+| `./gradlew test` | 运行单元测试 |
 
 
 ## 📁 项目结构
@@ -210,7 +247,6 @@ zzy
 
 
 <div align="center">
-
 **⭐ 如果觉得这个项目有帮助，请点个 Star ⭐**
 
 </div>

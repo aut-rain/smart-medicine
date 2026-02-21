@@ -1,6 +1,7 @@
 package com.example.smart_medicine_android.ui.screen.illness
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -8,6 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -18,6 +20,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -32,6 +35,7 @@ import com.example.smart_medicine_android.ui.theme.*
 fun IllnessDetailScreen(
     illnessId: Int,
     onBackClick: () -> Unit,
+    onMedicineClick: (Int) -> Unit = {},
     viewModel: IllnessDetailViewModel = viewModel()
 ) {
     LaunchedEffect(illnessId) {
@@ -58,7 +62,10 @@ fun IllnessDetailScreen(
                     }
 
                     uiState.illness != null -> {
-                        ModernIllnessDetailContent(illness = uiState.illness!!)
+                        ModernIllnessDetailContent(
+                            illness = uiState.illness!!,
+                            onMedicineClick = onMedicineClick
+                        )
                     }
 
                     else -> {
@@ -128,8 +135,8 @@ private fun ModernDetailTopBar(
                 ) {
                     Box(contentAlignment = Alignment.Center) {
                         Icon(
-                            imageVector = Icons.Default.FavoriteBorder,
-                            contentDescription = "收藏",
+                            imageVector = Icons.Default.Refresh,
+                            contentDescription = "刷新",
                             tint = TextPrimary,
                             modifier = Modifier.size(20.dp)
                         )
@@ -149,7 +156,8 @@ private fun ModernDetailTopBar(
 
 @Composable
 private fun ModernIllnessDetailContent(
-    illness: com.example.smart_medicine_android.data.network.model.IllnessDto
+    illness: com.example.smart_medicine_android.data.network.model.IllnessDetailDto,
+    onMedicineClick: (Int) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -166,13 +174,13 @@ private fun ModernIllnessDetailContent(
             modifier = Modifier.padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // 疾病名称
-            illness.illnessName?.let { name ->
+            // 病因
+            illness.includeReason?.let { reason ->
                 ModernInfoCard(
-                    title = "疾病名称",
+                    title = "病因",
                     icon = Icons.Default.Info,
                     iconTint = PrimaryBlue,
-                    content = name
+                    content = reason
                 )
             }
 
@@ -197,7 +205,7 @@ private fun ModernIllnessDetailContent(
             }
 
             // 疾病分类
-            illness.kindName?.let { kind ->
+            illness.category?.name?.let { kind ->
                 ModernInfoCard(
                     title = "疾病分类",
                     icon = Icons.Default.Category,
@@ -207,8 +215,174 @@ private fun ModernIllnessDetailContent(
             }
         }
 
+        // 关联药品卡片
+        if (!illness.medicines.isNullOrEmpty()) {
+            RelatedMedicinesCard(
+                medicines = illness.medicines!!,
+                onMedicineClick = onMedicineClick
+            )
+        }
+
         // 底部留白
         Spacer(modifier = Modifier.height(24.dp))
+    }
+}
+
+// ==================== 关联药品卡片 ====================
+
+@Composable
+private fun RelatedMedicinesCard(
+    medicines: List<com.example.smart_medicine_android.data.network.model.MedicineSimpleDto>,
+    onMedicineClick: (Int) -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+            .shadow(6.dp, RoundedCornerShape(16.dp), spotColor = CardShadow),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(18.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            // 标题行
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Surface(
+                    modifier = Modifier.size(32.dp),
+                    shape = CircleShape,
+                    color = AccentCyan.copy(alpha = 0.15f)
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            imageVector = Icons.Default.Medication,
+                            contentDescription = null,
+                            tint = AccentCyan,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                }
+
+                Text(
+                    text = "关联药品",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = TextPrimary
+                )
+
+                Text(
+                    text = "共${medicines.size}种",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = TextSecondary
+                )
+            }
+
+            // 药品列表
+            Column(
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                medicines.forEach { medicine ->
+                    MedicineListItem(
+                        medicine = medicine,
+                        onClick = { onMedicineClick(medicine.id ?: 0) }
+                    )
+                }
+            }
+        }
+    }
+}
+
+// ==================== 药品列表项 ====================
+
+@Composable
+private fun MedicineListItem(
+    medicine: com.example.smart_medicine_android.data.network.model.MedicineSimpleDto,
+    onClick: () -> Unit
+) {
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(12.dp),
+        color = BackgroundSecondary
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(14.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // 药品图标
+            Surface(
+                modifier = Modifier.size(40.dp),
+                shape = RoundedCornerShape(10.dp),
+                color = AccentCyan.copy(alpha = 0.15f)
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(
+                        imageVector = Icons.Default.Medication,
+                        contentDescription = null,
+                        tint = AccentCyan,
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
+            }
+
+            // 药品信息
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Text(
+                    text = medicine.medicineName ?: "未知药品",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Medium,
+                    color = TextPrimary
+                )
+
+                medicine.medicineEffect?.let { effect ->
+                    Text(
+                        text = effect,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = TextSecondary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
+
+            // 价格和箭头
+            Column(
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                medicine.medicinePrice?.let { price ->
+                    Text(
+                        text = "¥$price",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = PrimaryBlue
+                    )
+                }
+
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                    contentDescription = null,
+                    tint = TextSecondary.copy(alpha = 0.5f),
+                    modifier = Modifier.size(18.dp)
+                )
+            }
+        }
     }
 }
 
@@ -216,7 +390,7 @@ private fun ModernIllnessDetailContent(
 
 @Composable
 private fun IllnessHeaderCard(
-    illness: com.example.smart_medicine_android.data.network.model.IllnessDto
+    illness: com.example.smart_medicine_android.data.network.model.IllnessDetailDto
 ) {
     Card(
         modifier = Modifier

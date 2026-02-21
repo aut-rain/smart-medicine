@@ -66,13 +66,14 @@ body::after {
 .logo { float: left; margin-right: 24px; }
 .ant-layout-header .ant-menu { line-height: 64px; border-bottom: none; }
 
-.page { 
-  max-width: 1200px; 
+.page {
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 40px 24px;
+  padding: 40px 24px 60px 24px;
   animation: fadeIn 0.4s ease-in;
   position: relative;
   z-index: 1;
+  min-height: calc(100vh - 200px);
 }
 
 @keyframes fadeIn {
@@ -344,7 +345,5 @@ a:hover {
   .page { padding: 0 12px; }
   .ant-layout-header { padding: 0 16px !important; }
 }
-
-@source "../../node_modules/streamdown/dist/*.js";
 
 @import "tailwindcss";

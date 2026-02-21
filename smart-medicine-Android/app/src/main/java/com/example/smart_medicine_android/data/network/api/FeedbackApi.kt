@@ -37,16 +37,6 @@ interface FeedbackApi {
     ): ApiResponse<Void>
 
     /**
-     * 修改我的反馈
-     * PUT /api/v1/feedbacks/my/{id}
-     */
-    @PUT("api/v1/feedbacks/my/{id}")
-    suspend fun updateMyFeedback(
-        @Path("id") feedbackId: Int,
-        @Body request: FeedbackSubmitRequest
-    ): ApiResponse<FeedbackDto>
-
-    /**
      * 删除我的反馈
      * DELETE /api/v1/feedbacks/my/{id}
      */

@@ -1,5 +1,6 @@
 package com.example.smart_medicine_android.ui.screen.home
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -7,23 +8,27 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.selection.TextSelectionColors
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -31,10 +36,12 @@ import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.compose.AsyncImagePainter
 import coil.request.ImageRequest
-import androidx.compose.ui.platform.LocalContext
 import com.example.smart_medicine_android.data.network.model.IllnessDto
 import com.example.smart_medicine_android.data.network.model.MedicineDto
+import com.example.smart_medicine_android.data.network.model.NewsDto
 import com.example.smart_medicine_android.ui.theme.*
+import kotlinx.coroutines.delay
+import com.example.smart_medicine_android.ui.widget.NewsCarouselCard
 
 /**
  * 首页 - 带标签切换
@@ -46,12 +53,62 @@ fun HomeScreen(
     onConsultationClick: () -> Unit,
     onProfileClick: () -> Unit,
     onMedicineClick: (Int) -> Unit = {},
+    onNewsClick: (Int) -> Unit = {},
     viewModel: HomeViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    // 搜索类型和选中标签页同步：0=疾病, 1=药品
+    val isRefreshing by remember { derivedStateOf { uiState.isRefreshing } }
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    // 搜索类型和选中标签页同步：0=疾病, 1=药品, 2=资讯
     var searchType by remember { mutableIntStateOf(0) }
-    val tabs = listOf("热门疾病", "常用药品")
+    val tabs = listOf("热门疾病", "常用药品", "健康资讯")
+
+    // 轮播索引
+    var carouselIndex by remember { mutableIntStateOf(0) }
+
+    // 轮播自动播放
+    LaunchedEffect(uiState.news.size) {
+        Log.d("HomeScreen", "uiState.news.size = ${uiState.news.size}")
+        if (uiState.news.size > 1) {
+            while (true) {
+                delay(5000)
+                carouselIndex = (carouselIndex + 1) % uiState.news.size
+            }
+        }
+    }
+
+    // 监听成功消息变化并显示
+    LaunchedEffect(uiState.successMessage) {
+        uiState.successMessage?.let { message ->
+            val result = snackbarHostState.showSnackbar(
+                message = message,
+                duration = SnackbarDuration.Short,
+                withDismissAction = true
+            )
+            when (result) {
+                SnackbarResult.Dismissed, SnackbarResult.ActionPerformed -> {
+                    viewModel.clearSuccessMessage()
+                }
+            }
+        }
+    }
+
+    // 监听错误消息变化并显示
+    LaunchedEffect(uiState.errorMessage) {
+        uiState.errorMessage?.let { message ->
+            val result = snackbarHostState.showSnackbar(
+                message = message,
+                duration = SnackbarDuration.Indefinite,
+                withDismissAction = true
+            )
+            when (result) {
+                SnackbarResult.Dismissed, SnackbarResult.ActionPerformed -> {
+                    viewModel.clearError()
+                }
+            }
+        }
+    }
 
     // 当搜索类型改变时，同时也改变选中的标签页
     fun onSearchTypeChange(newType: Int) {
@@ -72,26 +129,77 @@ fun HomeScreen(
                 HomeTopBar(
                     onConsultationClick = onConsultationClick
                 )
+            },
+            snackbarHost = {
+                SnackbarHost(
+                    hostState = snackbarHostState,
+                    snackbar = { snackbarData ->
+                        val isError = uiState.errorMessage != null
+                        Card(
+                            shape = RoundedCornerShape(12.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = if (isError) ErrorRed else SuccessGreen
+                            ),
+                            modifier = Modifier.padding(16.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(12.dp),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = if (isError) Icons.Default.ErrorOutline else Icons.Default.CheckCircle,
+                                    contentDescription = null,
+                                    tint = Color.White,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                                Text(
+                                    text = snackbarData.visuals.message,
+                                    color = Color.White
+                                )
+                            }
+                        }
+                    }
+                )
             }
         ) { paddingValues ->
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentPadding = PaddingValues(
-                    top = paddingValues.calculateTopPadding(),
-                    bottom = 80.dp // 为底部导航栏留出空间
-                )
+            PullToRefreshBox(
+                isRefreshing = isRefreshing,
+                onRefresh = { viewModel.refresh() },
+                modifier = Modifier.fillMaxSize()
             ) {
-                // ==================== 搜索栏（带类型筛选）====================
-                item {
-                    SearchBarWithFilter(
-                        query = uiState.searchQuery,
-                        searchType = searchType,
-                        onQueryChange = { viewModel.search(it, searchType) },
-                        onSearchTypeChange = { onSearchTypeChange(it) },
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentPadding = PaddingValues(
+                        top = paddingValues.calculateTopPadding(),
+                        bottom = 80.dp // 为底部导航栏留出空间
                     )
-                }
+                ) {
+                    // ==================== 搜索栏（带类型筛选）====================
+                    item {
+                        SearchBarWithFilter(
+                            query = uiState.searchQuery,
+                            searchType = searchType,
+                            onQueryChange = { viewModel.search(it, searchType) },
+                            onSearchTypeChange = { onSearchTypeChange(it) },
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                        )
+                    }
+
+                    // ==================== 资讯轮播 ====================
+                    if (!uiState.isLoading && uiState.news.isNotEmpty()) {
+                        item {
+                            NewsCarouselCard(
+                                newsList = uiState.news,
+                                currentIndex = carouselIndex,
+                                onItemClick = { news ->
+                                    news.id?.let { onNewsClick(it) }
+                                }
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
+                    }
 
                 // ==================== 标签切换 ====================
                 item {
@@ -166,6 +274,25 @@ fun HomeScreen(
                                     }
                                 }
                             }
+                            2 -> {
+                                // 资讯搜索结果
+                                if (uiState.news.isEmpty()) {
+                                    item { EmptyState(message = "未找到相关资讯") }
+                                } else {
+                                    item {
+                                        SectionHeader(
+                                            title = "资讯搜索结果",
+                                            subtitle = "${uiState.news.size} 个结果"
+                                        )
+                                    }
+                                    items(uiState.news.chunked(2)) { chunk ->
+                                        NewsGridRow(
+                                            news = chunk,
+                                            onItemClick = onNewsClick
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
                     else -> {
@@ -209,20 +336,36 @@ fun HomeScreen(
                                     }
                                 }
                             }
+                            2 -> {
+                                // 健康资讯
+                                if (uiState.news.isEmpty()) {
+                                    item { EmptyState(message = "暂无资讯数据") }
+                                } else {
+                                    item {
+                                        SectionHeader(
+                                            title = "健康资讯",
+                                            subtitle = "${uiState.news.size} 个推荐"
+                                        )
+                                    }
+                                    val newsChunks = uiState.news.chunked(2)
+                                    Log.d("HomeScreen", "news.chunked(2) = ${newsChunks.size} chunks, total items = ${uiState.news.size}")
+                                    items(
+                                        count = newsChunks.size,
+                                        key = { index -> "news_chunk_$index" }
+                                    ) { index ->
+                                        val chunk = newsChunks[index]
+                                        Log.d("HomeScreen", "Rendering chunk $index with ${chunk.size} items")
+                                        NewsGridRow(
+                                            news = chunk,
+                                            onItemClick = onNewsClick
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
                 }
-
-                // ==================== 错误提示 ====================
-                uiState.errorMessage?.let { error ->
-                    item {
-                        ErrorSnackBar(
-                            message = error,
-                            onDismiss = viewModel::clearError,
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-                        )
-                    }
-                }
+            }
             }
         }
     }
@@ -289,7 +432,7 @@ private fun SearchBarWithFilter(
     modifier: Modifier = Modifier
 ) {
     var showFilterMenu by remember { mutableStateOf(false) }
-    val searchTypes = listOf("疾病", "药品")
+    val searchTypes = listOf("疾病", "药品", "资讯")
 
     Surface(
         modifier = modifier
@@ -555,7 +698,7 @@ private fun DiseaseCard(
                     color = TextTertiary
                 )
                 Icon(
-                    imageVector = Icons.Default.KeyboardArrowRight,
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     contentDescription = "查看详情",
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(18.dp)
@@ -668,7 +811,7 @@ private fun MedicineCard(
                     }
                 } ?: Spacer(modifier = Modifier.width(40.dp))
                 Icon(
-                    imageVector = Icons.Default.KeyboardArrowRight,
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     contentDescription = "查看详情",
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(18.dp)
@@ -676,6 +819,163 @@ private fun MedicineCard(
             }
         }
     }
+}
+
+// ==================== 资讯卡片 ====================
+
+@Composable
+private fun NewsCard(
+    news: NewsDto,
+    onClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .shadow(6.dp, RoundedCornerShape(16.dp), spotColor = CardShadow),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            // 封面图片
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(100.dp),
+                shape = RoundedCornerShape(12.dp),
+                color = PrimaryBlue.copy(alpha = 0.08f)
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    if (!news.coverOssPath.isNullOrEmpty()) {
+                        AsyncImage(
+                            model = news.coverOssPath,
+                            contentDescription = news.newsName,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Article,
+                                contentDescription = null,
+                                tint = AccentCyan.copy(alpha = 0.6f),
+                                modifier = Modifier.size(32.dp)
+                            )
+                            Text(
+                                text = "资讯封面",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = AccentCyan.copy(alpha = 0.5f)
+                            )
+                        }
+                    }
+                }
+            }
+
+            // 标题行
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = news.newsName ?: "资讯标题",
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Medium,
+                    color = TextPrimary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f)
+                )
+                Surface(
+                    shape = CircleShape,
+                    color = AccentCyan.copy(alpha = 0.15f),
+                    modifier = Modifier.size(8.dp)
+                ) {}
+            }
+
+            // 摘要
+            news.newsSummary?.let { summary ->
+                Text(
+                    text = summary,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = TextSecondary,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+
+            // 底部信息行
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    news.category?.let { category ->
+                        Text(
+                            text = category,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = AccentCyan
+                        )
+                    }
+                    news.viewCount?.let { count ->
+                        Text(
+                            text = "· $count 次浏览",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = TextTertiary
+                        )
+                    }
+                }
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                    contentDescription = "查看详情",
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(18.dp)
+                )
+            }
+        }
+    }
+}
+
+// ==================== 资讯网格行 ====================
+
+@Composable
+private fun NewsGridRow(
+    news: List<NewsDto>,
+    onItemClick: (Int) -> Unit
+) {
+    Log.d("NewsGridRow", "Rendering ${news.size} items in row")
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        news.forEach { item ->
+            item.id?.let { id ->
+                Box(modifier = Modifier.weight(1f)) {
+                    NewsCard(
+                        news = item,
+                        onClick = { onItemClick(id) }
+                    )
+                }
+            }
+        }
+    }
+    // 添加行间距
+    Spacer(modifier = Modifier.height(4.dp))
 }
 
 // ==================== 加载状态 ====================
@@ -727,35 +1027,3 @@ private fun EmptyState(message: String = "暂无数据") {
     }
 }
 
-// ==================== 错误提示 ====================
-
-@Composable
-private fun ErrorSnackBar(
-    message: String,
-    onDismiss: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Snackbar(
-        modifier = modifier,
-        shape = RoundedCornerShape(12.dp),
-        containerColor = ErrorRed,
-        contentColor = Color.White,
-        action = {
-            TextButton(onClick = onDismiss) {
-                Text("关闭", color = Color.White)
-            }
-        }
-    ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = Icons.Default.ErrorOutline,
-                contentDescription = null,
-                modifier = Modifier.size(20.dp)
-            )
-            Text(message)
-        }
-    }
-}

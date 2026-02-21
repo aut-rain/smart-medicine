@@ -11,14 +11,8 @@ export const adminUserService = {
   }) {
     return http.get('/api/v1/users', { params: query })
   },
-  getDetail(id: number) {
-    return http.get(`/api/v1/users/${id}`)
-  },
   delete(id: number) {
     return http.delete(`/api/v1/users/${id}`)
-  },
-  update(id: number, data: any) {
-    return http.put(`/api/v1/users/${id}`, data)
   },
 }
 
@@ -92,5 +86,30 @@ export const adminVideoService = {
   },
   delete(id: number) {
     return http.delete(`/api/v1/videos/${id}`)
+  },
+}
+
+// 资讯管理
+export const adminNewsService = {
+  list(query: {
+    page?: number
+    size?: number
+    status?: number
+    category?: string
+    keyword?: string
+  }) {
+    return http.get('/api/v1/medical-news', { params: query })
+  },
+  create(data: any) {
+    return http.post('/api/v1/medical-news', data)
+  },
+  update(id: number, data: any) {
+    return http.put(`/api/v1/medical-news/${id}`, data)
+  },
+  delete(id: number) {
+    return http.delete(`/api/v1/medical-news/${id}`)
+  },
+  getMarkdown(id: number) {
+    return http.get(`/api/v1/medical-news/${id}/markdown`)
   },
 }

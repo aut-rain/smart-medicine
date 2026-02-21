@@ -1,12 +1,15 @@
 import { Card, Descriptions, Divider, List, Space, Typography } from 'antd'
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { illnessService } from '@/services/illnessService'
 import { medicineService } from '@/services/medicineService'
+import { historyService } from '@/services/historyService'
+import { getUserId } from '@/utils/auth'
 import PageHeader from '@/components/PageHeader'
 
 export default function IllnessDetail() {
   const { id } = useParams()
+  const navigate = useNavigate()
   const [detail, setDetail] = useState<any>(null)
   const [medicines, setMedicines] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
@@ -18,8 +21,17 @@ export default function IllnessDetail() {
       illnessService.getDetail(Number(id)),
       medicineService.listByIllness(Number(id))
     ]).then(([illnessRes, medicineRes]) => {
-      setDetail(illnessRes.data?.data)
+      const illness = illnessRes.data?.data
+      setDetail(illness)
       setMedicines(medicineRes.data?.data || [])
+
+      // 异步记录浏览历史
+      const userId = getUserId()
+      if (userId && illness) {
+        historyService.record(userId, 2, illness.id, illness.illnessName).catch((err) => {
+          console.warn('记录浏览历史失败:', err)
+        })
+      }
     }).catch((error) => {
       console.error('加载疾病详情失败', error)
     }).finally(() => setLoading(false))
@@ -84,11 +96,11 @@ export default function IllnessDetail() {
                   dataSource={medicines}
                   renderItem={(m) => (
                     <List.Item>
-                      <Card 
-                        hoverable 
+                      <Card
+                        hoverable
                         size="small"
                         title={m.medicineName}
-                        onClick={() => window.open(`/#/medicine/${m.id}`, '_blank')}
+                        onClick={() => navigate(`/medicine/${m.id}`)}
                       >
                         <Typography.Paragraph ellipsis={{ rows: 2 }}>
                           {m.medicineEffect}

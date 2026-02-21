@@ -110,6 +110,7 @@ fun LoginScreen(
                     email = uiState.email,
                     password = uiState.password,
                     verificationCode = uiState.verificationCode,
+                    countdown = uiState.countdown,
                     onAccountChange = viewModel::onAccountChange,
                     onEmailChange = viewModel::onEmailChange,
                     onPasswordChange = viewModel::onPasswordChange,
@@ -138,6 +139,7 @@ private fun AuthFormCard(
     email: String,
     password: String,
     verificationCode: String,
+    countdown: Int,
     onAccountChange: (String) -> Unit,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
@@ -181,7 +183,7 @@ private fun AuthFormCard(
 
             // 错误提示
             if (errorMessage != null) {
-                ErrorBanner(message = errorMessage)
+                ErrorBanner(message = errorMessage, onClearError = onClearError)
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
@@ -202,6 +204,7 @@ private fun AuthFormCard(
                     email = email,
                     password = password,
                     verificationCode = verificationCode,
+                    countdown = countdown,
                     onAccountChange = onAccountChange,
                     onEmailChange = onEmailChange,
                     onPasswordChange = onPasswordChange,
@@ -254,41 +257,30 @@ private fun LoginFormContent(
     var passwordVisible by remember { mutableStateOf(false) }
 
     // 账号输入
-    OutlinedTextField(
+    ModernTextField(
         value = account,
         onValueChange = {
             onAccountChange(it)
             onClearError()
         },
-        modifier = Modifier.fillMaxWidth(),
-        label = { Text("账号") },
-        leadingIcon = {
-            Icon(Icons.Default.Person, contentDescription = null, tint = PrimaryBlue)
-        },
+        label = "账号",
+        leadingIcon = Icons.Default.Person,
+        keyboardType = KeyboardType.Text,
         singleLine = true,
-        enabled = !isLoading,
-        shape = RoundedCornerShape(12.dp),
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = PrimaryBlue,
-            focusedLabelColor = PrimaryBlue,
-            cursorColor = PrimaryBlue
-        )
+        enabled = !isLoading
     )
 
     Spacer(modifier = Modifier.height(16.dp))
 
     // 密码输入
-    OutlinedTextField(
+    ModernTextField(
         value = password,
         onValueChange = {
             onPasswordChange(it)
             onClearError()
         },
-        modifier = Modifier.fillMaxWidth(),
-        label = { Text("密码") },
-        leadingIcon = {
-            Icon(Icons.Default.Lock, contentDescription = null, tint = PrimaryBlue)
-        },
+        label = "密码",
+        leadingIcon = Icons.Default.Lock,
         trailingIcon = {
             IconButton(onClick = { passwordVisible = !passwordVisible }) {
                 Icon(
@@ -298,16 +290,9 @@ private fun LoginFormContent(
                 )
             }
         },
-        visualTransformation = if (passwordVisible) VisualTransformation.None
-        else PasswordVisualTransformation(),
+        isPassword = !passwordVisible,
         singleLine = true,
-        enabled = !isLoading,
-        shape = RoundedCornerShape(12.dp),
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = PrimaryBlue,
-            focusedLabelColor = PrimaryBlue,
-            cursorColor = PrimaryBlue
-        )
+        enabled = !isLoading
     )
 
     Spacer(modifier = Modifier.height(24.dp))
@@ -317,8 +302,8 @@ private fun LoginFormContent(
         onClick = onLoginClick,
         modifier = Modifier
             .fillMaxWidth()
-            .height(50.dp),
-        shape = RoundedCornerShape(12.dp),
+            .height(52.dp),
+        shape = RoundedCornerShape(14.dp),
         enabled = account.isNotBlank() && password.isNotBlank() && !isLoading,
         colors = ButtonDefaults.buttonColors(
             containerColor = PrimaryBlue,
@@ -329,12 +314,13 @@ private fun LoginFormContent(
             CircularProgressIndicator(
                 modifier = Modifier.size(24.dp),
                 color = Color.White,
-                strokeWidth = 2.dp
+                strokeWidth = 2.5.dp
             )
         } else {
             Text(
                 text = "登录",
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold
             )
         }
     }
@@ -348,6 +334,7 @@ private fun RegisterFormContent(
     email: String,
     password: String,
     verificationCode: String,
+    countdown: Int,
     onAccountChange: (String) -> Unit,
     onEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
@@ -360,58 +347,42 @@ private fun RegisterFormContent(
     var passwordVisible by remember { mutableStateOf(false) }
 
     // 账号输入
-    OutlinedTextField(
+    ModernTextField(
         value = account,
         onValueChange = {
             onAccountChange(it)
             onClearError()
         },
-        modifier = Modifier.fillMaxWidth(),
-        label = { Text("账号") },
-        leadingIcon = {
-            Icon(Icons.Default.Person, contentDescription = null, tint = PrimaryBlue)
-        },
+        label = "账号",
+        leadingIcon = Icons.Default.Person,
+        keyboardType = KeyboardType.Text,
         singleLine = true,
-        enabled = !isLoading,
-        shape = RoundedCornerShape(12.dp),
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = PrimaryBlue,
-            focusedLabelColor = PrimaryBlue,
-            cursorColor = PrimaryBlue
-        )
+        enabled = !isLoading
     )
 
     Spacer(modifier = Modifier.height(12.dp))
 
     // 邮箱输入
-    OutlinedTextField(
+    ModernTextField(
         value = email,
         onValueChange = {
             onEmailChange(it)
             onClearError()
         },
-        modifier = Modifier.fillMaxWidth(),
-        label = { Text("邮箱") },
-        leadingIcon = {
-            Icon(Icons.Default.Email, contentDescription = null, tint = PrimaryBlue)
-        },
+        label = "邮箱",
+        leadingIcon = Icons.Default.Email,
+        keyboardType = KeyboardType.Email,
         singleLine = true,
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-        enabled = !isLoading,
-        shape = RoundedCornerShape(12.dp),
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = PrimaryBlue,
-            focusedLabelColor = PrimaryBlue,
-            cursorColor = PrimaryBlue
-        )
+        enabled = !isLoading
     )
 
     Spacer(modifier = Modifier.height(12.dp))
 
-    // 验证码输入
+    // 验证码输入行
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         OutlinedTextField(
             value = verificationCode,
@@ -427,7 +398,7 @@ private fun RegisterFormContent(
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             enabled = !isLoading,
-            shape = RoundedCornerShape(12.dp),
+            shape = RoundedCornerShape(14.dp),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = PrimaryBlue,
                 focusedLabelColor = PrimaryBlue,
@@ -435,29 +406,38 @@ private fun RegisterFormContent(
             )
         )
 
-        OutlinedButton(
+        // 发送验证码按钮
+        Button(
             onClick = onSendCodeClick,
-            enabled = !isLoading && email.isNotBlank(),
-            shape = RoundedCornerShape(12.dp)
+            modifier = Modifier
+                .height(52.dp)
+                .widthIn(min = 80.dp),
+            shape = RoundedCornerShape(14.dp),
+            enabled = email.isNotBlank() && countdown == 0 && !isLoading,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = if (countdown > 0) PrimaryBlue.copy(alpha = 0.5f) else AccentCyan,
+                disabledContainerColor = PrimaryBlue.copy(alpha = 0.5f)
+            )
         ) {
-            Text("发送")
+            Text(
+                text = if (countdown > 0) "${countdown}秒" else "发送",
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = if (countdown > 0) FontWeight.Normal else FontWeight.SemiBold
+            )
         }
     }
 
     Spacer(modifier = Modifier.height(12.dp))
 
     // 密码输入
-    OutlinedTextField(
+    ModernTextField(
         value = password,
         onValueChange = {
             onPasswordChange(it)
             onClearError()
         },
-        modifier = Modifier.fillMaxWidth(),
-        label = { Text("密码") },
-        leadingIcon = {
-            Icon(Icons.Default.Lock, contentDescription = null, tint = PrimaryBlue)
-        },
+        label = "密码",
+        leadingIcon = Icons.Default.Lock,
         trailingIcon = {
             IconButton(onClick = { passwordVisible = !passwordVisible }) {
                 Icon(
@@ -467,16 +447,9 @@ private fun RegisterFormContent(
                 )
             }
         },
-        visualTransformation = if (passwordVisible) VisualTransformation.None
-        else PasswordVisualTransformation(),
+        isPassword = !passwordVisible,
         singleLine = true,
-        enabled = !isLoading,
-        shape = RoundedCornerShape(12.dp),
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = PrimaryBlue,
-            focusedLabelColor = PrimaryBlue,
-            cursorColor = PrimaryBlue
-        )
+        enabled = !isLoading
     )
 
     Spacer(modifier = Modifier.height(24.dp))
@@ -486,8 +459,8 @@ private fun RegisterFormContent(
         onClick = onRegisterClick,
         modifier = Modifier
             .fillMaxWidth()
-            .height(50.dp),
-        shape = RoundedCornerShape(12.dp),
+            .height(52.dp),
+        shape = RoundedCornerShape(14.dp),
         enabled = account.isNotBlank() && email.isNotBlank() &&
                   password.isNotBlank() && verificationCode.isNotBlank() && !isLoading,
         colors = ButtonDefaults.buttonColors(
@@ -499,25 +472,65 @@ private fun RegisterFormContent(
             CircularProgressIndicator(
                 modifier = Modifier.size(24.dp),
                 color = Color.White,
-                strokeWidth = 2.dp
+                strokeWidth = 2.5.dp
             )
         } else {
             Text(
                 text = "注册",
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold
             )
         }
     }
 }
 
+// ==================== 现代输入框组件 ====================
+
+@Composable
+private fun ModernTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    leadingIcon: androidx.compose.ui.graphics.vector.ImageVector,
+    trailingIcon: @Composable (() -> Unit)? = null,
+    isPassword: Boolean = false,
+    singleLine: Boolean = true,
+    keyboardType: KeyboardType = KeyboardType.Text,
+    enabled: Boolean = true
+) {
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        modifier = Modifier.fillMaxWidth(),
+        label = { Text(label) },
+        leadingIcon = {
+            Icon(leadingIcon, contentDescription = null, tint = PrimaryBlue)
+        },
+        trailingIcon = trailingIcon,
+        visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
+        singleLine = singleLine,
+        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+        enabled = enabled,
+        shape = RoundedCornerShape(14.dp),
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = PrimaryBlue,
+            focusedLabelColor = PrimaryBlue,
+            cursorColor = PrimaryBlue
+        )
+    )
+}
+
 // ==================== 错误提示 ====================
 
 @Composable
-private fun ErrorBanner(message: String) {
+private fun ErrorBanner(
+    message: String,
+    onClearError: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(ErrorRed.copy(alpha = 0.1f), RoundedCornerShape(8.dp))
+            .background(ErrorRed.copy(alpha = 0.1f), RoundedCornerShape(12.dp))
             .padding(12.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -526,12 +539,23 @@ private fun ErrorBanner(message: String) {
             imageVector = Icons.Default.ErrorOutline,
             contentDescription = null,
             tint = ErrorRed,
-            modifier = Modifier.size(20.dp)
+            modifier = Modifier.size(18.dp)
         )
         Text(
             text = message,
             style = MaterialTheme.typography.bodySmall,
             color = ErrorRed
         )
+        IconButton(
+            onClick = onClearError,
+            modifier = Modifier.size(20.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = "关闭",
+                tint = ErrorRed,
+                modifier = Modifier.size(16.dp)
+            )
+        }
     }
 }

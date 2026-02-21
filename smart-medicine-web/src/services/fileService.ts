@@ -56,7 +56,7 @@ export const fileService = {
   uploadFile(file: File, onProgress?: (percent: number) => void) {
     const formData = new FormData()
     formData.append('file', file)
-    
+
     return http.post('/api/v1/files/upload', formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
@@ -68,13 +68,5 @@ export const fileService = {
         }
       }
     })
-  },
-
-  /**
-   * 删除文件
-   * @param fileUrl 文件URL
-   */
-  deleteFile(fileUrl: string) {
-    return http.delete('/api/v1/files', { params: { fileUrl } })
   }
 }

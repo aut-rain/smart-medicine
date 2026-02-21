@@ -3,6 +3,7 @@ package com.medical.smartmedicine.history.controller;
 import com.medical.smartmedicine.common.constant.ApiConstant;
 import com.medical.smartmedicine.common.result.PageResult;
 import com.medical.smartmedicine.common.result.Result;
+import com.medical.smartmedicine.common.util.UserContextHolder;
 import com.medical.smartmedicine.history.service.HistoryService;
 import com.medical.smartmedicine.history.vo.HistoryVO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -59,21 +60,21 @@ public class HistoryController {
 
     /**
      * 查询我的浏览历史
+     * 从当前登录用户获取，无需传userId参数
      *
      * @param page 页码
      * @param size 每页大小
      * @return 历史记录列表
      */
     @GetMapping
-    @Operation(summary = "查询我的浏览历史", description = "查询当前用户的浏览历史记录")
+    @Operation(summary = "查询我的浏览历史", description = "查询当前登录用户的浏览历史记录")
     public Result<PageResult<HistoryVO>> getMyHistories(
             @Parameter(description = "页码") @RequestParam(defaultValue = "1") Integer page,
-            @Parameter(description = "每页数量") @RequestParam(defaultValue = "20") Integer size,
-            @Parameter(description = "用户ID", hidden = true)
-            @RequestAttribute(value = "userId", required = false) Integer userId) {
+            @Parameter(description = "每页数量") @RequestParam(defaultValue = "20") Integer size) {
 
+        Integer userId = UserContextHolder.getUserIdOrNull();
         if (userId == null) {
-            userId = 1;
+            userId = 1; // 临时默认值，开发环境使用
         }
 
         log.info("查询浏览历史: userId={}, page={}, size={}", userId, page, size);
@@ -84,17 +85,17 @@ public class HistoryController {
 
     /**
      * 清空我的浏览历史
+     * 清空当前登录用户的所有浏览历史
      *
      * @return 操作结果
      */
     @DeleteMapping
-    @Operation(summary = "清空浏览历史", description = "清空当前用户的所有浏览历史")
-    public Result<Void> clearMyHistories(
-            @Parameter(description = "用户ID", hidden = true)
-            @RequestAttribute(value = "userId", required = false) Integer userId) {
+    @Operation(summary = "清空浏览历史", description = "清空当前登录用户的所有浏览历史")
+    public Result<Void> clearMyHistories() {
 
+        Integer userId = UserContextHolder.getUserIdOrNull();
         if (userId == null) {
-            userId = 1;
+            userId = 1; // 临时默认值，开发环境使用
         }
 
         log.info("清空浏览历史: userId={}", userId);

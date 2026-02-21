@@ -1,6 +1,7 @@
 package com.medical.smartmedicine.model.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import jakarta.validation.constraints.NotBlank;
@@ -13,7 +14,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 医疗咨询实体
+ * 医疗资讯实体
  *
  * @author ZZY
  */
@@ -33,31 +34,50 @@ public class MedicalNews implements Serializable {
     private Integer id;
 
     /**
-     * 医疗咨询名字
+     * 资讯标题
      */
-    @NotBlank(message = "咨询标题不能为空")
+    @NotBlank(message = "资讯标题不能为空")
     private String newsName;
 
     /**
-     * 医疗咨询关键字
+     * 资讯摘要（列表展示用）
      */
-    private String newsKey;
+    private String newsSummary;
 
     /**
-     * 咨询的详细内容
+     * 封面图OSS路径
      */
-    @NotBlank(message = "咨询内容不能为空")
-    private String newsContent;
+    @NotBlank(message = "封面图不能为空")
+    private String coverOssPath;
 
     /**
-     * 包含的图片地址
+     * Markdown文件OSS路径
      */
-    private String imgPath;
+    @NotBlank(message = "Markdown文件不能为空")
+    private String markdownOssPath;
 
     /**
-     * 关联的疾病id
+     * 分类
      */
-    private Integer relationIllness;
+    private String category;
+
+    /**
+     * 作者
+     */
+    private String author;
+
+    /**
+     * 状态：0-草稿，1-已发布
+     */
+    @TableField("status")
+    @Builder.Default
+    private Integer status = 0;
+
+    /**
+     * 浏览量
+     */
+    @Builder.Default
+    private Integer viewCount = 0;
 
     /**
      * 创建时间

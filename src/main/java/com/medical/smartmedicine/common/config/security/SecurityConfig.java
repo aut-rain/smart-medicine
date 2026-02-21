@@ -95,6 +95,11 @@ public class SecurityConfig {
                                 "/api/v1/medicines/**"
                         ).permitAll()
 
+                        // 公开接口 - 医疗资讯查询(允许游客访问)
+                        .requestMatchers(
+                                "/api/v1/medical-news/**"
+                        ).permitAll()
+
                         // 公开接口 - AI聊天(根据业务需求，可以考虑开放或需要认证)
                         .requestMatchers(
                                 "/api/v1/ai-chat/**"

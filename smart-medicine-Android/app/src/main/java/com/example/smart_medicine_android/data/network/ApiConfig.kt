@@ -60,9 +60,9 @@ object ApiConfig {
 
     /**
      * 生产环境 BaseUrl
-     * TODO: 替换为实际的生产服务器地址
+     * 部署时请替换为实际的生产服务器地址
      */
-    private const val PRODUCTION_BASE_URL = "https://api.example.com/"
+    private const val PRODUCTION_BASE_URL = "http://your-server-ip:8080/"
 
     // ==================== 超时配置 ====================
 

@@ -54,28 +54,6 @@ class FeedbackRepository(
     }
 
     /**
-     * 更新我的反馈
-     * @param feedbackId 反馈ID
-     * @param request 反馈请求
-     * @return 更新后的反馈
-     */
-    suspend fun updateMyFeedback(
-        feedbackId: Int,
-        request: FeedbackSubmitRequest
-    ): Result<FeedbackDto> {
-        return try {
-            val response = feedbackApi.updateMyFeedback(feedbackId, request)
-            if (response.isSuccess) {
-                Result.success(response.getDataOrThrow())
-            } else {
-                Result.failure(ApiException(response.code ?: "UNKNOWN", response.message ?: "Unknown error"))
-            }
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
-    /**
      * 删除我的反馈
      * @param feedbackId 反馈ID
      * @return 成功或失败

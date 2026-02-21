@@ -34,7 +34,7 @@ interface IllnessApi {
     @GET("api/v1/illnesses/{id}")
     suspend fun getIllnessDetail(
         @Path("id") illnessId: Int
-    ): ApiResponse<IllnessDto>
+    ): ApiResponse<IllnessDetailDto>
 
     /**
      * 分页获取疾病列表

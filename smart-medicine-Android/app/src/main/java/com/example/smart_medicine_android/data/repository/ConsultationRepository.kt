@@ -241,98 +241,10 @@ class ConsultationRepository(
     }.flowOn(kotlinx.coroutines.Dispatchers.IO)  // 确保网络操作在 IO 线程执行
 
     /**
-     * 发起 AI 咨询（同步模式 - 保留兼容性）
-     */
-    suspend fun consult(
-        question: String,
-        illnessId: String? = null,
-        userId: String
-    ): Result<ConsultationEntity> {
-        val consultationId = UUID.randomUUID().toString()
-        val currentTime = System.currentTimeMillis()
-
-        android.util.Log.d("ConsultationRepo", "consult() called with userId: $userId, question: $question")
-
-        return try {
-            val userIdInt = userId.toIntOrNull() ?: 0
-            android.util.Log.d("ConsultationRepo", "userIdInt: $userIdInt, consultationId: $consultationId")
-
-            val request = ChatRequest(
-                message = question,
-                conversationId = consultationId,
-                userId = userIdInt
-            )
-            android.util.Log.d("ConsultationRepo", "Sending request: $request")
-
-            val response = consultationApi.consultSync(request)
-            android.util.Log.d("ConsultationRepo", "Response received. isSuccess: ${response.isSuccess}, code: ${response.code}, message: ${response.message}")
-
-            if (response.isSuccess) {
-                val chatResponse = response.getDataOrThrow()
-                val answer = chatResponse.content ?: ""
-
-                android.util.Log.d("ConsultationRepo", "Chat response content length: ${answer.length}")
-
-                if (answer.isNotEmpty()) {
-                    val completedConsultation = ConsultationEntity(
-                        id = consultationId,
-                        userId = userId,
-                        illnessId = illnessId,
-                        question = question,
-                        answer = answer,
-                        status = "completed",
-                        createdAt = currentTime,
-                        updatedAt = currentTime
-                    )
-                    consultationDao.insertConsultation(completedConsultation)
-                    Result.success(completedConsultation)
-                } else {
-                    android.util.Log.e("ConsultationRepo", "AI returned empty response")
-                    Result.failure(Exception("AI未返回有效回复"))
-                }
-            } else {
-                android.util.Log.e("ConsultationRepo", "API request failed. code: ${response.code}, message: ${response.message}")
-                Result.failure(ApiException(response.code ?: "UNKNOWN", response.message ?: "请求失败"))
-            }
-        } catch (e: Exception) {
-            android.util.Log.e("ConsultationRepo", "Exception during consult", e)
-            Result.failure(e)
-        }
-    }
-
-    /**
      * 获取用户的咨询历史
      */
     fun getConsultationsByUserId(userId: String): Flow<List<ConsultationEntity>> {
         return consultationDao.getConsultationsByUserId(userId)
-    }
-
-    /**
-     * 根据疾病ID获取咨询记录
-     */
-    fun getConsultationsByIllnessId(illnessId: String): Flow<List<ConsultationEntity>> {
-        return consultationDao.getConsultationsByIllnessId(illnessId)
-    }
-
-    /**
-     * 根据ID获取咨询记录
-     */
-    fun getConsultationById(consultationId: String): Flow<ConsultationEntity?> {
-        return consultationDao.getConsultationById(consultationId)
-    }
-
-    /**
-     * 获取待处理的咨询
-     */
-    fun getPendingConsultations(): Flow<List<ConsultationEntity>> {
-        return consultationDao.getPendingConsultations()
-    }
-
-    /**
-     * 删除咨询记录
-     */
-    suspend fun deleteConsultation(consultationId: String) {
-        consultationDao.deleteConsultation(consultationId)
     }
 
     /**

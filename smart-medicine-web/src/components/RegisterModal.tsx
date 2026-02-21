@@ -34,15 +34,21 @@ export default function RegisterModal({ open, onCancel, onSuccess, onSwitchToLog
 
   const sendCode = async () => {
     const email = form.getFieldValue('userEmail')
+    console.log('发送验证码，邮箱:', email)
+
     if (!email) {
       message.warning('请先填写邮箱')
       return
     }
     if (countdown > 0) {
+      console.log('倒计时中，跳过发送')
       return
     }
+
     try {
+      console.log('开始发送验证码请求...')
       await authService.sendEmailCode(email)
+      console.log('验证码发送成功')
       message.success('验证码已发送到您的邮箱')
       // 开始60秒倒计时
       setCountdown(60)
@@ -56,7 +62,8 @@ export default function RegisterModal({ open, onCancel, onSuccess, onSwitchToLog
         })
       }, 1000)
     } catch (error: any) {
-      message.error(error?.response?.data?.message || '发送失败')
+      console.error('发送验证码失败:', error)
+      message.error(error?.response?.data?.message || error?.message || '发送失败')
     }
   }
 

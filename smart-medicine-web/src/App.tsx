@@ -19,6 +19,8 @@ const MedicineDetail = lazy(() => import('./pages/MedicineDetail'))
 const MedicineSearch = lazy(() => import('./pages/MedicineSearch'))
 const ScienceVideos = lazy(() => import('./pages/ScienceVideos'))
 const ScienceVideoDetail = lazy(() => import('./pages/ScienceVideoDetail'))
+const NewsList = lazy(() => import('./pages/NewsList'))
+const NewsDetail = lazy(() => import('./pages/NewsDetail'))
 const AiChat = lazy(() => import('./pages/AiChat'))
 const Profile = lazy(() => import('./pages/Profile'))
 const Feedback = lazy(() => import('./pages/Feedback'))
@@ -27,6 +29,7 @@ const AdminUsers = lazy(() => import('./pages/admin/AdminUsers'))
 const AdminMedicines = lazy(() => import('./pages/admin/AdminMedicines'))
 const AdminIllnesses = lazy(() => import('./pages/admin/AdminIllnesses'))
 const AdminVideos = lazy(() => import('./pages/admin/AdminVideos'))
+const AdminNews = lazy(() => import('./pages/admin/AdminNews'))
 
 const { Header, Content, Footer } = Layout
 
@@ -132,6 +135,7 @@ export default function App() {
             { key: 'illness-search', label: <Link to="/illness-search" style={{ color: '#18191c' }}>疾病查询</Link> },
             { key: 'medicine-search', label: <Link to="/medicine-search" style={{ color: '#18191c' }}>药品查询</Link> },
             { key: 'science-videos', label: <Link to="/science-videos" style={{ color: '#18191c' }}>健康科普</Link> },
+            { key: 'news-list', label: <Link to="/news-list" style={{ color: '#18191c' }}>健康资讯</Link> },
             { key: 'ai-chat', label: <Link to="/ai-chat" style={{ color: '#18191c' }}>AI 问诊</Link> },
             { key: 'feedback', label: <Link to="/feedback" style={{ color: '#18191c' }}>意见反馈</Link> },
           ]} 
@@ -205,6 +209,8 @@ export default function App() {
             <Route path="/" element={<Home />} />
           <Route path="/illness/:id" element={<IllnessDetail />} />
           <Route path="/medicine/:id" element={<MedicineDetail />} />
+          <Route path="/news/:id" element={<NewsDetail />} />
+          <Route path="/news-list" element={<NewsList />} />
           <Route path="/illness-search" element={<IllnessSearch />} />
           <Route path="/medicine-search" element={<MedicineSearch />} />
           <Route
@@ -278,6 +284,14 @@ export default function App() {
             element={
               <AdminRoute>
                 <AdminVideos />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/news"
+            element={
+              <AdminRoute>
+                <AdminNews />
               </AdminRoute>
             }
           />

@@ -4,6 +4,7 @@ import cn.hutool.core.util.IdUtil;
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.model.CannedAccessControlList;
 import com.aliyun.oss.model.CreateBucketRequest;
+import com.aliyun.oss.model.OSSObject;
 import com.aliyun.oss.model.PutObjectRequest;
 import com.aliyun.oss.model.PutObjectResult;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +12,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 /**
  * 阿里云OSS对象存储客户端
@@ -161,5 +166,71 @@ public class OssClient {
             return "";
         }
         return filename.substring(filename.lastIndexOf("."));
+    }
+
+    /**
+     * 构建完整的OSS URL
+     *
+     * @param ossPath OSS路径（如: smart-medicine/news/covers/xxx.jpg）
+     * @return 完整URL（如: https://bucket.endpoint/path）
+     */
+    public String buildUrl(String ossPath) {
+        if (ossPath == null || ossPath.isEmpty()) {
+            return "";
+        }
+        // 如果已经是完整URL，直接返回
+        if (ossPath.startsWith("http")) {
+            return ossPath;
+        }
+        // 拼接完整URL
+        return "https://" + bucketName + "." + endPoint + "/" + ossPath;
+    }
+
+    /**
+     * 从OSS读取文件内容
+     *
+     * @param ossPath OSS路径或完整URL
+     * @return 文件内容字符串
+     */
+    public String readFileContent(String ossPath) {
+        if (ossPath == null || ossPath.isEmpty()) {
+            log.warn("OSS路径为空");
+            return null;
+        }
+
+        OSSClient ossClient = null;
+        try {
+            ossClient = new OSSClient(endPoint, accessKeyId, accessKeySecret);
+
+            // 提取ObjectKey
+            String objectKey = extractObjectKey(ossPath);
+            if (objectKey == null || objectKey.isEmpty()) {
+                log.warn("无法从URL提取ObjectKey: {}", ossPath);
+                return null;
+            }
+
+            // 读取文件内容
+            OSSObject ossObject = ossClient.getObject(bucketName, objectKey);
+            try (InputStream inputStream = ossObject.getObjectContent();
+                 BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+
+                StringBuilder content = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    content.append(line).append("\n");
+                }
+
+                log.info("文件读取成功: {}", ossPath);
+                return content.toString();
+            }
+
+        } catch (Exception e) {
+            log.error("读取OSS文件失败: {}", ossPath, e);
+            return null;
+        } finally {
+            if (ossClient != null) {
+                ossClient.shutdown();
+            }
+        }
     }
 }
