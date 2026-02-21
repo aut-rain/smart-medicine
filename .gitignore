@@ -176,3 +176,7 @@ javadoc/
 .tern-port
 .yarn-integrity
 .eslintcache
+
+# Claude Code
+/.claude/
+.mcp.json
