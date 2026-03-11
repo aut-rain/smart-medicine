@@ -5,7 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.medical.smartmedicine.common.client.OssClient;
-import com.medical.smartmedicine.common.enums.ErrorCodeEnum;
+import com.medical.smartmedicine.common.enums.ResultCode;
 import com.medical.smartmedicine.common.exception.BusinessException;
 import com.medical.smartmedicine.common.result.PageResult;
 import com.medical.smartmedicine.mapper.ScienceVideoMapper;
@@ -77,7 +77,7 @@ public class VideoServiceImpl implements VideoService {
         ScienceVideo video = scienceVideoMapper.selectById(id);
         if (video == null) {
             log.warn("视频不存在: id={}", id);
-            throw new BusinessException(ErrorCodeEnum.RESOURCE_NOT_FOUND, "视频不存在");
+            throw new BusinessException(ResultCode.RESOURCE_NOT_FOUND, "视频不存在");
         }
         return convertToVO(video);
     }
@@ -101,7 +101,7 @@ public class VideoServiceImpl implements VideoService {
         int rows = scienceVideoMapper.insert(video);
         if (rows <= 0) {
             log.error("视频创建失败: {}", createDTO);
-            throw new BusinessException(ErrorCodeEnum.SYSTEM_ERROR, "视频创建失败");
+            throw new BusinessException(ResultCode.SYSTEM_ERROR, "视频创建失败");
         }
 
         log.info("视频创建成功: id={}", video.getId());
@@ -117,7 +117,7 @@ public class VideoServiceImpl implements VideoService {
         ScienceVideo video = scienceVideoMapper.selectById(id);
         if (video == null) {
             log.warn("视频不存在: id={}", id);
-            throw new BusinessException(ErrorCodeEnum.RESOURCE_NOT_FOUND, "视频不存在");
+            throw new BusinessException(ResultCode.RESOURCE_NOT_FOUND, "视频不存在");
         }
 
         // 更新字段(只更新非空字段)
@@ -139,7 +139,7 @@ public class VideoServiceImpl implements VideoService {
         int rows = scienceVideoMapper.updateById(video);
         if (rows <= 0) {
             log.error("视频更新失败: id={}", id);
-            throw new BusinessException(ErrorCodeEnum.SYSTEM_ERROR, "视频更新失败");
+            throw new BusinessException(ResultCode.SYSTEM_ERROR, "视频更新失败");
         }
 
         log.info("视频更新成功: id={}", id);
@@ -155,7 +155,7 @@ public class VideoServiceImpl implements VideoService {
         ScienceVideo video = scienceVideoMapper.selectById(id);
         if (video == null) {
             log.warn("视频不存在: id={}", id);
-            throw new BusinessException(ErrorCodeEnum.RESOURCE_NOT_FOUND, "视频不存在");
+            throw new BusinessException(ResultCode.RESOURCE_NOT_FOUND, "视频不存在");
         }
 
         String link = video.getLink();
@@ -165,7 +165,7 @@ public class VideoServiceImpl implements VideoService {
         int rows = scienceVideoMapper.deleteById(id);
         if (rows <= 0) {
             log.error("视频删除失败: id={}", id);
-            throw new BusinessException(ErrorCodeEnum.SYSTEM_ERROR, "视频删除失败");
+            throw new BusinessException(ResultCode.SYSTEM_ERROR, "视频删除失败");
         }
 
         // 数据库删除成功后，删除OSS中的视频文件（不删除外部链接）

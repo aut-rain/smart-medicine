@@ -1,7 +1,6 @@
 package com.medical.smartmedicine.feedback.controller;
 
 import com.medical.smartmedicine.common.constant.ApiConstant;
-import com.medical.smartmedicine.common.enums.ErrorCodeEnum;
 import com.medical.smartmedicine.common.result.PageResult;
 import com.medical.smartmedicine.common.result.Result;
 import com.medical.smartmedicine.common.util.UserContextHolder;

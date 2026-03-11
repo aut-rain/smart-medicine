@@ -1,6 +1,6 @@
 package com.medical.smartmedicine.common.util;
 
-import com.medical.smartmedicine.common.enums.ErrorCodeEnum;
+import com.medical.smartmedicine.common.enums.ResultCode;
 import com.medical.smartmedicine.common.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -27,7 +27,7 @@ public class SecurityContextUtil {
         
         if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
             log.warn("获取当前用户失败: 用户未登录");
-            throw new BusinessException(ErrorCodeEnum.UNAUTHORIZED);
+            throw new BusinessException(ResultCode.UNAUTHORIZED);
         }
 
         try {
@@ -41,11 +41,11 @@ public class SecurityContextUtil {
                 return Integer.parseInt((String) principal);
             } else {
                 log.error("无法解析principal类型: {}", principal.getClass());
-                throw new BusinessException(ErrorCodeEnum.UNAUTHORIZED);
+                throw new BusinessException(ResultCode.UNAUTHORIZED);
             }
         } catch (Exception e) {
             log.error("获取当前用户ID失败", e);
-            throw new BusinessException(ErrorCodeEnum.UNAUTHORIZED);
+            throw new BusinessException(ResultCode.UNAUTHORIZED);
         }
     }
 

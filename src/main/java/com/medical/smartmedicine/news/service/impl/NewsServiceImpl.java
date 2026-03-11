@@ -5,7 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.medical.smartmedicine.common.client.OssClient;
-import com.medical.smartmedicine.common.enums.ErrorCodeEnum;
+import com.medical.smartmedicine.common.enums.ResultCode;
 import com.medical.smartmedicine.common.exception.BusinessException;
 import com.medical.smartmedicine.common.result.PageResult;
 import com.medical.smartmedicine.mapper.MedicalNewsMapper;
@@ -79,12 +79,12 @@ public class NewsServiceImpl implements NewsService {
         // 查询资讯
         MedicalNews news = newsMapper.selectById(id);
         if (news == null) {
-            throw new BusinessException(ErrorCodeEnum.NEWS_NOT_FOUND);
+            throw new BusinessException(ResultCode.NEWS_NOT_FOUND);
         }
 
         // 只显示已发布的资讯
         if (news.getStatus() != 1) {
-            throw new BusinessException(ErrorCodeEnum.NEWS_NOT_FOUND);
+            throw new BusinessException(ResultCode.NEWS_NOT_FOUND);
         }
 
         // 从OSS读取Markdown内容
@@ -160,7 +160,7 @@ public class NewsServiceImpl implements NewsService {
     public NewsVO updateNews(Integer id, NewsUpdateDTO updateDTO) {
         MedicalNews existingNews = newsMapper.selectById(id);
         if (existingNews == null) {
-            throw new BusinessException(ErrorCodeEnum.NEWS_NOT_FOUND);
+            throw new BusinessException(ResultCode.NEWS_NOT_FOUND);
         }
 
         // 只更新非空字段
@@ -197,7 +197,7 @@ public class NewsServiceImpl implements NewsService {
     public void deleteNews(Integer id) {
         MedicalNews news = newsMapper.selectById(id);
         if (news == null) {
-            throw new BusinessException(ErrorCodeEnum.NEWS_NOT_FOUND);
+            throw new BusinessException(ResultCode.NEWS_NOT_FOUND);
         }
 
         // 删除OSS文件
@@ -300,7 +300,7 @@ public class NewsServiceImpl implements NewsService {
         // 查询资讯
         MedicalNews news = newsMapper.selectById(id);
         if (news == null) {
-            throw new BusinessException(ErrorCodeEnum.NEWS_NOT_FOUND);
+            throw new BusinessException(ResultCode.NEWS_NOT_FOUND);
         }
 
         // 从OSS读取Markdown内容

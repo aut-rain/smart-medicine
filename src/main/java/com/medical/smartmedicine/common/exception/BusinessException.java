@@ -1,6 +1,6 @@
 package com.medical.smartmedicine.common.exception;
 
-import com.medical.smartmedicine.common.enums.ErrorCodeEnum;
+import com.medical.smartmedicine.common.enums.ResultCode;
 import lombok.Getter;
 
 /**
@@ -28,7 +28,7 @@ public class BusinessException extends RuntimeException {
      *
      * @param errorCode 错误码枚举
      */
-    public BusinessException(ErrorCodeEnum errorCode) {
+    public BusinessException(ResultCode errorCode) {
         super(errorCode.getMessage());
         this.code = errorCode.getCode();
         this.message = errorCode.getMessage();
@@ -40,7 +40,7 @@ public class BusinessException extends RuntimeException {
      * @param errorCode 错误码枚举
      * @param customMessage 自定义消息
      */
-    public BusinessException(ErrorCodeEnum errorCode, String customMessage) {
+    public BusinessException(ResultCode errorCode, String customMessage) {
         super(customMessage);
         this.code = errorCode.getCode();
         this.message = customMessage;
@@ -52,7 +52,7 @@ public class BusinessException extends RuntimeException {
      * @param errorCode 错误码枚举
      * @param cause 异常原因
      */
-    public BusinessException(ErrorCodeEnum errorCode, Throwable cause) {
+    public BusinessException(ResultCode errorCode, Throwable cause) {
         super(errorCode.getMessage(), cause);
         this.code = errorCode.getCode();
         this.message = errorCode.getMessage();
@@ -62,7 +62,7 @@ public class BusinessException extends RuntimeException {
      * 兼容旧版本: 使用错误信息构造(不推荐)
      *
      * @param message 错误信息
-     * @deprecated 请使用 {@link #BusinessException(ErrorCodeEnum)} 或 {@link #BusinessException(ErrorCodeEnum, String)}
+     * @deprecated 请使用 {@link #BusinessException(ResultCode)} 或 {@link #BusinessException(ResultCode, String)}
      */
     @Deprecated
     public BusinessException(String message) {
@@ -76,7 +76,7 @@ public class BusinessException extends RuntimeException {
      *
      * @param code 错误码
      * @param message 错误信息
-     * @deprecated 请使用 {@link #BusinessException(ErrorCodeEnum)} 或 {@link #BusinessException(ErrorCodeEnum, String)}
+     * @deprecated 请使用 {@link #BusinessException(ResultCode)} 或 {@link #BusinessException(ResultCode, String)}
      */
     @Deprecated
     public BusinessException(Integer code, String message) {

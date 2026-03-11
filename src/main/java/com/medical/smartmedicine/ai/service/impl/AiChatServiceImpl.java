@@ -4,7 +4,7 @@ import cn.hutool.core.util.IdUtil;
 import com.medical.smartmedicine.ai.dto.ChatRequest;
 import com.medical.smartmedicine.ai.service.AiChatService;
 import com.medical.smartmedicine.ai.vo.ChatResponse;
-import com.medical.smartmedicine.common.enums.ErrorCodeEnum;
+import com.medical.smartmedicine.common.enums.ResultCode;
 import com.medical.smartmedicine.common.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -61,7 +61,7 @@ public class AiChatServiceImpl implements AiChatService {
         } catch (Exception e) {
             log.error("AI Chat异常 - conversationId: {}, error: {}", 
                     request.getConversationId(), e.getMessage(), e);
-            throw new BusinessException(ErrorCodeEnum.SYSTEM_ERROR, "AI服务暂时不可用，请稍后再试");
+            throw new BusinessException(ResultCode.SYSTEM_ERROR, "AI服务暂时不可用，请稍后再试");
         }
     }
 
@@ -87,7 +87,7 @@ public class AiChatServiceImpl implements AiChatService {
         } catch (Exception e) {
             log.error("AI Stream Chat异常 - conversationId: {}, error: {}",
                     request.getConversationId(), e.getMessage(), e);
-            return Flux.error(new BusinessException(ErrorCodeEnum.SYSTEM_ERROR, "AI服务暂时不可用，请稍后再试"));
+            return Flux.error(new BusinessException(ResultCode.SYSTEM_ERROR, "AI服务暂时不可用，请稍后再试"));
         }
     }
 
@@ -100,7 +100,7 @@ public class AiChatServiceImpl implements AiChatService {
         } catch (Exception e) {
             log.error("清除会话历史异常 - conversationId: {}, error: {}", 
                     conversationId, e.getMessage(), e);
-            throw new BusinessException(ErrorCodeEnum.SYSTEM_ERROR, "清除会话失败");
+            throw new BusinessException(ResultCode.SYSTEM_ERROR, "清除会话失败");
         }
     }
 }

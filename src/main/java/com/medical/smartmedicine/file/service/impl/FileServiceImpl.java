@@ -1,7 +1,7 @@
 package com.medical.smartmedicine.file.service.impl;
 
 import com.medical.smartmedicine.common.client.OssClient;
-import com.medical.smartmedicine.common.enums.ErrorCodeEnum;
+import com.medical.smartmedicine.common.enums.ResultCode;
 import com.medical.smartmedicine.common.exception.BusinessException;
 import com.medical.smartmedicine.file.service.FileService;
 import com.medical.smartmedicine.file.vo.FileUploadVO;
@@ -55,7 +55,7 @@ public class FileServiceImpl implements FileService {
             
             if (url == null || url.isEmpty()) {
                 log.error("文件上传失败: OSS返回空URL");
-                throw new BusinessException(ErrorCodeEnum.FILE_UPLOAD_FAILED);
+                throw new BusinessException(ResultCode.FILE_UPLOAD_FAILED);
             }
             
             FileUploadVO uploadVO = FileUploadVO.builder()
@@ -73,7 +73,7 @@ public class FileServiceImpl implements FileService {
             throw e;
         } catch (Exception e) {
             log.error("文件上传异常: {}", file.getOriginalFilename(), e);
-            throw new BusinessException(ErrorCodeEnum.FILE_UPLOAD_FAILED, "文件上传失败: " + e.getMessage());
+            throw new BusinessException(ResultCode.FILE_UPLOAD_FAILED, "文件上传失败: " + e.getMessage());
         }
     }
 

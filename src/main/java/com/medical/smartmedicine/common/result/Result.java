@@ -1,6 +1,6 @@
 package com.medical.smartmedicine.common.result;
 
-import com.medical.smartmedicine.common.enums.ErrorCodeEnum;
+import com.medical.smartmedicine.common.enums.ResultCode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -48,8 +48,8 @@ public class Result<T> implements Serializable {
      */
     public static <T> Result<T> success() {
         return Result.<T>builder()
-                .code(ErrorCodeEnum.SUCCESS.getCode())
-                .message(ErrorCodeEnum.SUCCESS.getMessage())
+                .code(ResultCode.SUCCESS.getCode())
+                .message(ResultCode.SUCCESS.getMessage())
                 .timestamp(System.currentTimeMillis())
                 .build();
     }
@@ -59,8 +59,8 @@ public class Result<T> implements Serializable {
      */
     public static <T> Result<T> success(T data) {
         return Result.<T>builder()
-                .code(ErrorCodeEnum.SUCCESS.getCode())
-                .message(ErrorCodeEnum.SUCCESS.getMessage())
+                .code(ResultCode.SUCCESS.getCode())
+                .message(ResultCode.SUCCESS.getMessage())
                 .data(data)
                 .timestamp(System.currentTimeMillis())
                 .build();
@@ -71,7 +71,7 @@ public class Result<T> implements Serializable {
      */
     public static <T> Result<T> success(String message) {
         return Result.<T>builder()
-                .code(ErrorCodeEnum.SUCCESS.getCode())
+                .code(ResultCode.SUCCESS.getCode())
                 .message(message)
                 .timestamp(System.currentTimeMillis())
                 .build();
@@ -82,7 +82,7 @@ public class Result<T> implements Serializable {
      */
     public static <T> Result<T> success(String message, T data) {
         return Result.<T>builder()
-                .code(ErrorCodeEnum.SUCCESS.getCode())
+                .code(ResultCode.SUCCESS.getCode())
                 .message(message)
                 .data(data)
                 .timestamp(System.currentTimeMillis())
@@ -94,8 +94,8 @@ public class Result<T> implements Serializable {
      */
     public static <T> Result<T> fail() {
         return Result.<T>builder()
-                .code(ErrorCodeEnum.SYSTEM_ERROR.getCode())
-                .message(ErrorCodeEnum.SYSTEM_ERROR.getMessage())
+                .code(ResultCode.SYSTEM_ERROR.getCode())
+                .message(ResultCode.SYSTEM_ERROR.getMessage())
                 .timestamp(System.currentTimeMillis())
                 .build();
     }
@@ -103,12 +103,12 @@ public class Result<T> implements Serializable {
     /**
      * 失败响应（自定义消息）
      * 
-     * @deprecated 请使用 {@link #fail(ErrorCodeEnum)} 或 {@link #fail(ErrorCodeEnum, String)}
+     * @deprecated 请使用 {@link #fail(ResultCode)} 或 {@link #fail(ResultCode, String)}
      */
     @Deprecated
     public static <T> Result<T> fail(String message) {
         return Result.<T>builder()
-                .code(ErrorCodeEnum.BUSINESS_ERROR.getCode())
+                .code(ResultCode.BUSINESS_ERROR.getCode())
                 .message(message)
                 .timestamp(System.currentTimeMillis())
                 .build();
@@ -120,7 +120,7 @@ public class Result<T> implements Serializable {
      * @param errorCode 错误码枚举
      * @return Result
      */
-    public static <T> Result<T> fail(ErrorCodeEnum errorCode) {
+    public static <T> Result<T> fail(ResultCode errorCode) {
         return Result.<T>builder()
                 .code(errorCode.getCode())
                 .message(errorCode.getMessage())
@@ -135,7 +135,7 @@ public class Result<T> implements Serializable {
      * @param customMessage 自定义消息
      * @return Result
      */
-    public static <T> Result<T> fail(ErrorCodeEnum errorCode, String customMessage) {
+    public static <T> Result<T> fail(ResultCode errorCode, String customMessage) {
         return Result.<T>builder()
                 .code(errorCode.getCode())
                 .message(customMessage)
@@ -158,6 +158,6 @@ public class Result<T> implements Serializable {
      * 判断是否成功
      */
     public boolean isSuccess() {
-        return ErrorCodeEnum.SUCCESS.getCode().equals(this.code);
+        return ResultCode.SUCCESS.getCode().equals(this.code);
     }
 }

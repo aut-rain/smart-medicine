@@ -10,7 +10,7 @@ import com.medical.smartmedicine.auth.vo.TokenVO;
 import com.medical.smartmedicine.common.client.EmailClient;
 import com.medical.smartmedicine.common.constant.RedisConstant;
 import com.medical.smartmedicine.common.constant.SecurityConstant;
-import com.medical.smartmedicine.common.enums.ErrorCodeEnum;
+import com.medical.smartmedicine.common.enums.ResultCode;
 import com.medical.smartmedicine.common.enums.RoleEnum;
 import com.medical.smartmedicine.common.exception.BusinessException;
 import com.medical.smartmedicine.common.config.security.JwtTokenProvider;
@@ -52,12 +52,12 @@ public class AuthServiceImpl implements AuthService {
         User user = userMapper.selectOne(queryWrapper);
 
         if (user == null) {
-            throw new BusinessException(ErrorCodeEnum.USER_NOT_FOUND);
+            throw new BusinessException(ResultCode.USER_NOT_FOUND);
         }
 
         // 2. 验证密码
         if (!passwordEncoder.matches(loginDTO.getUserPwd(), user.getUserPwd())) {
-            throw new BusinessException(ErrorCodeEnum.PASSWORD_ERROR);
+            throw new BusinessException(ResultCode.PASSWORD_ERROR);
         }
 
         // 3. 生成Token
@@ -75,7 +75,7 @@ public class AuthServiceImpl implements AuthService {
         // 1. 验证邮箱验证码
         if (StrUtil.isNotBlank(registerDTO.getEmailCode())) {
             if (!verifyEmailCode(registerDTO.getUserEmail(), registerDTO.getEmailCode())) {
-                throw new BusinessException(ErrorCodeEnum.EMAIL_CODE_INVALID);
+                throw new BusinessException(ResultCode.EMAIL_CODE_INVALID);
             }
         }
 
@@ -83,7 +83,7 @@ public class AuthServiceImpl implements AuthService {
         LambdaQueryWrapper<User> accountWrapper = new LambdaQueryWrapper<>();
         accountWrapper.eq(User::getUserAccount, registerDTO.getUserAccount());
         if (userMapper.selectCount(accountWrapper) > 0) {
-            throw new BusinessException(ErrorCodeEnum.ACCOUNT_EXISTS);
+            throw new BusinessException(ResultCode.ACCOUNT_EXISTS);
         }
 
         // 3. 检查邮箱是否已注册
@@ -91,7 +91,7 @@ public class AuthServiceImpl implements AuthService {
             LambdaQueryWrapper<User> emailWrapper = new LambdaQueryWrapper<>();
             emailWrapper.eq(User::getUserEmail, registerDTO.getUserEmail());
             if (userMapper.selectCount(emailWrapper) > 0) {
-                throw new BusinessException(ErrorCodeEnum.EMAIL_EXISTS);
+                throw new BusinessException(ResultCode.EMAIL_EXISTS);
             }
         }
 
@@ -143,7 +143,7 @@ public class AuthServiceImpl implements AuthService {
         try {
             // 验证refreshToken
             if (!jwtTokenProvider.validateToken(refreshToken)) {
-                throw new BusinessException(ErrorCodeEnum.TOKEN_REFRESH_FAILED);
+                throw new BusinessException(ResultCode.TOKEN_REFRESH_FAILED);
             }
 
             // 从Token中获取用户ID
@@ -152,7 +152,7 @@ public class AuthServiceImpl implements AuthService {
             // 查询用户
             User user = userMapper.selectById(userId);
             if (user == null) {
-                throw new BusinessException(ErrorCodeEnum.USER_NOT_FOUND);
+                throw new BusinessException(ResultCode.USER_NOT_FOUND);
             }
 
             // 生成新Token
@@ -161,7 +161,7 @@ public class AuthServiceImpl implements AuthService {
             throw e;
         } catch (Exception e) {
             log.error("刷新Token失败", e);
-            throw new BusinessException(ErrorCodeEnum.TOKEN_REFRESH_FAILED);
+            throw new BusinessException(ResultCode.TOKEN_REFRESH_FAILED);
         }
     }
 

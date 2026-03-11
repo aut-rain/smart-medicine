@@ -4,8 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.medical.smartmedicine.common.enums.ErrorCodeEnum;
-import com.medical.smartmedicine.common.enums.MedicineTypeEnum;
+import com.medical.smartmedicine.common.enums.ResultCode;
 import com.medical.smartmedicine.common.enums.OperateTypeEnum;
 import com.medical.smartmedicine.common.exception.BusinessException;
 import com.medical.smartmedicine.common.result.PageResult;
@@ -89,7 +88,7 @@ public class IllnessServiceImpl implements IllnessService {
         // 查询疾病基本信息
         Illness illness = illnessMapper.selectById(id);
         if (illness == null) {
-            throw new BusinessException(ErrorCodeEnum.ILLNESS_NOT_FOUND);
+            throw new BusinessException(ResultCode.ILLNESS_NOT_FOUND);
         }
 
         // 查询分类信息
@@ -282,7 +281,7 @@ public class IllnessServiceImpl implements IllnessService {
         int rows = illnessMapper.insert(illness);
         if (rows <= 0) {
             log.error("疾病创建失败: {}", createDTO);
-            throw new BusinessException(ErrorCodeEnum.SYSTEM_ERROR, "疾病创建失败");
+            throw new BusinessException(ResultCode.SYSTEM_ERROR, "疾病创建失败");
         }
 
         log.info("疾病创建成功: id={}", illness.getId());
@@ -298,7 +297,7 @@ public class IllnessServiceImpl implements IllnessService {
         Illness illness = illnessMapper.selectById(id);
         if (illness == null) {
             log.warn("疾病不存在: id={}", id);
-            throw new BusinessException(ErrorCodeEnum.ILLNESS_NOT_FOUND);
+            throw new BusinessException(ResultCode.ILLNESS_NOT_FOUND);
         }
 
         // 更新字段(只更新非空字段)
@@ -323,7 +322,7 @@ public class IllnessServiceImpl implements IllnessService {
         int rows = illnessMapper.updateById(illness);
         if (rows <= 0) {
             log.error("疾病更新失败: id={}", id);
-            throw new BusinessException(ErrorCodeEnum.SYSTEM_ERROR, "疾病更新失败");
+            throw new BusinessException(ResultCode.SYSTEM_ERROR, "疾病更新失败");
         }
 
         log.info("疾病更新成功: id={}", id);
@@ -339,14 +338,14 @@ public class IllnessServiceImpl implements IllnessService {
         Illness illness = illnessMapper.selectById(id);
         if (illness == null) {
             log.warn("疾病不存在: id={}", id);
-            throw new BusinessException(ErrorCodeEnum.ILLNESS_NOT_FOUND);
+            throw new BusinessException(ResultCode.ILLNESS_NOT_FOUND);
         }
 
         // 删除疾病
         int rows = illnessMapper.deleteById(id);
         if (rows <= 0) {
             log.error("疾病删除失败: id={}", id);
-            throw new BusinessException(ErrorCodeEnum.SYSTEM_ERROR, "疾病删除失败");
+            throw new BusinessException(ResultCode.SYSTEM_ERROR, "疾病删除失败");
         }
 
         log.info("疾病删除成功: id={}", id);

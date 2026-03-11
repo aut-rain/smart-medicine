@@ -1,6 +1,6 @@
 package com.medical.smartmedicine.common.handler;
 
-import com.medical.smartmedicine.common.enums.ErrorCodeEnum;
+import com.medical.smartmedicine.common.enums.ResultCode;
 import com.medical.smartmedicine.common.exception.BusinessException;
 import com.medical.smartmedicine.common.result.Result;
 import jakarta.validation.ConstraintViolation;
@@ -44,7 +44,7 @@ public class GlobalExceptionHandler {
                 .map(FieldError::getDefaultMessage)
                 .collect(Collectors.joining("; "));
         log.warn("参数校验失败: {}", message);
-        return Result.fail(ErrorCodeEnum.PARAM_INVALID.getCode(), message);
+        return Result.fail(ResultCode.PARAM_INVALID.getCode(), message);
     }
 
     /**
@@ -57,7 +57,7 @@ public class GlobalExceptionHandler {
                 .map(FieldError::getDefaultMessage)
                 .collect(Collectors.joining("; "));
         log.warn("参数绑定失败: {}", message);
-        return Result.fail(ErrorCodeEnum.PARAM_INVALID.getCode(), message);
+        return Result.fail(ResultCode.PARAM_INVALID.getCode(), message);
     }
 
     /**
@@ -70,7 +70,7 @@ public class GlobalExceptionHandler {
                 .map(ConstraintViolation::getMessage)
                 .collect(Collectors.joining("; "));
         log.warn("约束违反: {}", message);
-        return Result.fail(ErrorCodeEnum.PARAM_INVALID.getCode(), message);
+        return Result.fail(ResultCode.PARAM_INVALID.getCode(), message);
     }
 
     /**
@@ -79,7 +79,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public Result<Void> handleIllegalArgumentException(IllegalArgumentException e) {
         log.warn("非法参数: {}", e.getMessage());
-        return Result.fail(ErrorCodeEnum.PARAM_INVALID.getCode(), e.getMessage());
+        return Result.fail(ResultCode.PARAM_INVALID.getCode(), e.getMessage());
     }
 
     /**
@@ -88,6 +88,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public Result<Void> handleException(Exception e) {
         log.error("系统异常", e);
-        return Result.fail(ErrorCodeEnum.SYSTEM_ERROR);
+        return Result.fail(ResultCode.SYSTEM_ERROR);
     }
 }

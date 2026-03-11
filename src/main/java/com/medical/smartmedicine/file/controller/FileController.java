@@ -1,7 +1,7 @@
 package com.medical.smartmedicine.file.controller;
 
 import com.medical.smartmedicine.common.constant.ApiConstant;
-import com.medical.smartmedicine.common.enums.ErrorCodeEnum;
+import com.medical.smartmedicine.common.enums.ResultCode;
 import com.medical.smartmedicine.common.exception.BusinessException;
 import com.medical.smartmedicine.common.result.Result;
 import com.medical.smartmedicine.file.service.FileService;
@@ -9,7 +9,6 @@ import com.medical.smartmedicine.file.vo.FileUploadVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -81,7 +80,7 @@ public class FileController {
         FileUploadVO uploadVO = fileService.uploadFile(file);
 
         if (uploadVO.getUrl() == null || uploadVO.getUrl().isEmpty()) {
-            throw new BusinessException(ErrorCodeEnum.FILE_UPLOAD_FAILED);
+            throw new BusinessException(ResultCode.FILE_UPLOAD_FAILED);
         }
 
         log.info("文件上传成功: url={}", uploadVO.getUrl());
@@ -116,7 +115,7 @@ public class FileController {
 
         // 验证图片格式
         if (!ALLOWED_IMAGE_TYPES.contains(file.getContentType())) {
-            throw new BusinessException(ErrorCodeEnum.FILE_TYPE_NOT_SUPPORTED, 
+            throw new BusinessException(ResultCode.FILE_TYPE_NOT_SUPPORTED,
                     "不支持的图片格式，仅支持：jpg、png、gif、webp");
         }
 
@@ -124,7 +123,7 @@ public class FileController {
         FileUploadVO uploadVO = fileService.uploadImage(file);
 
         if (uploadVO.getUrl() == null || uploadVO.getUrl().isEmpty()) {
-            throw new BusinessException(ErrorCodeEnum.FILE_UPLOAD_FAILED);
+            throw new BusinessException(ResultCode.FILE_UPLOAD_FAILED);
         }
 
         log.info("图片上传成功: url={}", uploadVO.getUrl());
@@ -159,7 +158,7 @@ public class FileController {
 
         // 验证视频格式
         if (!ALLOWED_VIDEO_TYPES.contains(file.getContentType())) {
-            throw new BusinessException(ErrorCodeEnum.FILE_TYPE_NOT_SUPPORTED, 
+            throw new BusinessException(ResultCode.FILE_TYPE_NOT_SUPPORTED,
                     "不支持的视频格式，仅支持：mp4、avi、mov、wmv、flv、mkv");
         }
 
@@ -167,7 +166,7 @@ public class FileController {
         FileUploadVO uploadVO = fileService.upload(file);
 
         if (uploadVO.getUrl() == null || uploadVO.getUrl().isEmpty()) {
-            throw new BusinessException(ErrorCodeEnum.FILE_UPLOAD_FAILED);
+            throw new BusinessException(ResultCode.FILE_UPLOAD_FAILED);
         }
 
         log.info("视频上传成功: url={}", uploadVO.getUrl());
@@ -192,13 +191,13 @@ public class FileController {
         log.info("删除文件: fileUrl={}", fileUrl);
 
         if (fileUrl == null || fileUrl.trim().isEmpty()) {
-            throw new BusinessException(ErrorCodeEnum.PARAM_ERROR, "文件URL不能为空");
+            throw new BusinessException(ResultCode.PARAM_ERROR, "文件URL不能为空");
         }
 
         boolean success = fileService.deleteFile(fileUrl);
 
         if (!success) {
-            throw new BusinessException(ErrorCodeEnum.FILE_DELETE_FAILED);
+            throw new BusinessException(ResultCode.FILE_DELETE_FAILED);
         }
 
         log.info("文件删除成功: fileUrl={}", fileUrl);
@@ -214,25 +213,25 @@ public class FileController {
     private void validateFile(MultipartFile file, long maxSize) {
         // 验证文件是否为空
         if (file == null || file.isEmpty()) {
-            throw new BusinessException(ErrorCodeEnum.FILE_EMPTY);
+            throw new BusinessException(ResultCode.FILE_EMPTY);
         }
 
         // 验证文件名
         String originalFilename = file.getOriginalFilename();
         if (originalFilename == null || originalFilename.trim().isEmpty()) {
-            throw new BusinessException(ErrorCodeEnum.FILE_NAME_INVALID);
+            throw new BusinessException(ResultCode.FILE_NAME_INVALID);
         }
 
         // 验证文件大小
         if (file.getSize() > maxSize) {
             String maxSizeStr = maxSize / (1024 * 1024) + "MB";
-            throw new BusinessException(ErrorCodeEnum.FILE_SIZE_EXCEEDED, 
+            throw new BusinessException(ResultCode.FILE_SIZE_EXCEEDED,
                     "文件大小超过限制：" + maxSizeStr);
         }
 
         // 验证文件扩展名
         if (!originalFilename.contains(".")) {
-            throw new BusinessException(ErrorCodeEnum.FILE_TYPE_NOT_SUPPORTED, 
+            throw new BusinessException(ResultCode.FILE_TYPE_NOT_SUPPORTED,
                     "文件必须包含扩展名");
         }
     }

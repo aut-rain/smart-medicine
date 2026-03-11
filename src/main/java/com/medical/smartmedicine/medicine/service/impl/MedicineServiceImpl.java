@@ -5,7 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.medical.smartmedicine.common.client.OssClient;
-import com.medical.smartmedicine.common.enums.ErrorCodeEnum;
+import com.medical.smartmedicine.common.enums.ResultCode;
 import com.medical.smartmedicine.common.enums.MedicineTypeEnum;
 import com.medical.smartmedicine.common.enums.OperateTypeEnum;
 import com.medical.smartmedicine.common.exception.BusinessException;
@@ -25,7 +25,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -91,7 +90,7 @@ public class MedicineServiceImpl implements MedicineService {
     public MedicineVO getMedicineById(Integer id) {
         Medicine medicine = medicineMapper.selectById(id);
         if (medicine == null) {
-            throw new BusinessException(ErrorCodeEnum.MEDICINE_NOT_FOUND);
+            throw new BusinessException(ResultCode.MEDICINE_NOT_FOUND);
         }
         
         // 添加历史记录（异步处理，不影响主流程）
@@ -198,7 +197,7 @@ public class MedicineServiceImpl implements MedicineService {
         int rows = medicineMapper.insert(medicine);
         if (rows <= 0) {
             log.error("药品创建失败: {}", createDTO);
-            throw new BusinessException(ErrorCodeEnum.SYSTEM_ERROR, "药品创建失败");
+            throw new BusinessException(ResultCode.SYSTEM_ERROR, "药品创建失败");
         }
 
         log.info("药品创建成功: id={}", medicine.getId());
@@ -214,7 +213,7 @@ public class MedicineServiceImpl implements MedicineService {
         Medicine medicine = medicineMapper.selectById(id);
         if (medicine == null) {
             log.warn("药品不存在: id={}", id);
-            throw new BusinessException(ErrorCodeEnum.MEDICINE_NOT_FOUND);
+            throw new BusinessException(ResultCode.MEDICINE_NOT_FOUND);
         }
 
         // 更新字段(只更新非空字段)
@@ -254,7 +253,7 @@ public class MedicineServiceImpl implements MedicineService {
         int rows = medicineMapper.updateById(medicine);
         if (rows <= 0) {
             log.error("药品更新失败: id={}", id);
-            throw new BusinessException(ErrorCodeEnum.SYSTEM_ERROR, "药品更新失败");
+            throw new BusinessException(ResultCode.SYSTEM_ERROR, "药品更新失败");
         }
 
         log.info("药品更新成功: id={}", id);
@@ -270,7 +269,7 @@ public class MedicineServiceImpl implements MedicineService {
         Medicine medicine = medicineMapper.selectById(id);
         if (medicine == null) {
             log.warn("药品不存在: id={}", id);
-            throw new BusinessException(ErrorCodeEnum.MEDICINE_NOT_FOUND);
+            throw new BusinessException(ResultCode.MEDICINE_NOT_FOUND);
         }
 
         String imgPath = medicine.getImgPath();
@@ -279,7 +278,7 @@ public class MedicineServiceImpl implements MedicineService {
         int rows = medicineMapper.deleteById(id);
         if (rows <= 0) {
             log.error("药品删除失败: id={}", id);
-            throw new BusinessException(ErrorCodeEnum.SYSTEM_ERROR, "药品删除失败");
+            throw new BusinessException(ResultCode.SYSTEM_ERROR, "药品删除失败");
         }
 
         // 数据库删除成功后，删除OSS中的图片

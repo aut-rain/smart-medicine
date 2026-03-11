@@ -2,7 +2,7 @@ package com.medical.smartmedicine.common.config.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.medical.smartmedicine.common.result.Result;
-import com.medical.smartmedicine.common.enums.ErrorCodeEnum;
+import com.medical.smartmedicine.common.enums.ResultCode;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -42,7 +42,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
 
         // 返回统一格式的错误响应
-        Result<Void> result = Result.fail(ErrorCodeEnum.UNAUTHORIZED);
+        Result<Void> result = Result.fail(ResultCode.UNAUTHORIZED);
         response.getWriter().write(objectMapper.writeValueAsString(result));
     }
 }

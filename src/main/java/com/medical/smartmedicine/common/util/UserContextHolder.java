@@ -1,6 +1,6 @@
 package com.medical.smartmedicine.common.util;
 
-import com.medical.smartmedicine.common.enums.ErrorCodeEnum;
+import com.medical.smartmedicine.common.enums.ResultCode;
 import com.medical.smartmedicine.common.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,7 +35,7 @@ public class UserContextHolder {
         Integer userId = USER_ID_HOLDER.get();
         if (userId == null) {
             log.warn("获取当前用户失败: 用户未登录");
-            throw new BusinessException(ErrorCodeEnum.UNAUTHORIZED);
+            throw new BusinessException(ResultCode.UNAUTHORIZED);
         }
         return userId;
     }

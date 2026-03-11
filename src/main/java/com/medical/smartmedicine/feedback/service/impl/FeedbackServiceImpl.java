@@ -3,7 +3,7 @@ package com.medical.smartmedicine.feedback.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.medical.smartmedicine.common.enums.ErrorCodeEnum;
+import com.medical.smartmedicine.common.enums.ResultCode;
 import com.medical.smartmedicine.common.exception.BusinessException;
 import com.medical.smartmedicine.common.result.PageResult;
 import com.medical.smartmedicine.feedback.dto.FeedbackSubmitDTO;
@@ -38,7 +38,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         // 查询用户信息
         User user = userMapper.selectById(userId);
         if (user == null) {
-            throw new BusinessException(ErrorCodeEnum.USER_NOT_FOUND);
+            throw new BusinessException(ResultCode.USER_NOT_FOUND);
         }
 
         // 构建反馈实体(注意: feedback表没有user_id字段,只存储name)
@@ -97,18 +97,18 @@ public class FeedbackServiceImpl implements FeedbackService {
         // 查询用户信息
         User user = userMapper.selectById(userId);
         if (user == null) {
-            throw new BusinessException(ErrorCodeEnum.USER_NOT_FOUND);
+            throw new BusinessException(ResultCode.USER_NOT_FOUND);
         }
 
         // 查询反馈是否存在
         Feedback feedback = feedbackMapper.selectById(id);
         if (feedback == null) {
-            throw new BusinessException(ErrorCodeEnum.FEEDBACK_NOT_FOUND, "反馈不存在");
+            throw new BusinessException(ResultCode.FEEDBACK_NOT_FOUND, "反馈不存在");
         }
 
         // 验证反馈是否属于该用户
         if (!feedback.getName().equals(user.getUserAccount())) {
-            throw new BusinessException(ErrorCodeEnum.PERMISSION_DENIED, "无权限修改此反馈");
+            throw new BusinessException(ResultCode.PERMISSION_DENIED, "无权限修改此反馈");
         }
 
         // 更新反馈内容
@@ -119,7 +119,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         int rows = feedbackMapper.updateById(feedback);
         if (rows <= 0) {
             log.error("反馈更新失败: id={}", id);
-            throw new BusinessException(ErrorCodeEnum.SYSTEM_ERROR, "反馈更新失败");
+            throw new BusinessException(ResultCode.SYSTEM_ERROR, "反馈更新失败");
         }
 
         log.info("反馈更新成功: feedbackId={}", id);
@@ -133,25 +133,25 @@ public class FeedbackServiceImpl implements FeedbackService {
         // 查询用户信息
         User user = userMapper.selectById(userId);
         if (user == null) {
-            throw new BusinessException(ErrorCodeEnum.USER_NOT_FOUND);
+            throw new BusinessException(ResultCode.USER_NOT_FOUND);
         }
 
         // 查询反馈是否存在
         Feedback feedback = feedbackMapper.selectById(id);
         if (feedback == null) {
-            throw new BusinessException(ErrorCodeEnum.FEEDBACK_NOT_FOUND, "反馈不存在");
+            throw new BusinessException(ResultCode.FEEDBACK_NOT_FOUND, "反馈不存在");
         }
 
         // 验证反馈是否属于该用户
         if (!feedback.getName().equals(user.getUserAccount())) {
-            throw new BusinessException(ErrorCodeEnum.PERMISSION_DENIED, "无权限删除此反馈");
+            throw new BusinessException(ResultCode.PERMISSION_DENIED, "无权限删除此反馈");
         }
 
         // 删除反馈
         int rows = feedbackMapper.deleteById(id);
         if (rows <= 0) {
             log.error("反馈删除失败: id={}", id);
-            throw new BusinessException(ErrorCodeEnum.SYSTEM_ERROR, "反馈删除失败");
+            throw new BusinessException(ResultCode.SYSTEM_ERROR, "反馈删除失败");
         }
 
         log.info("反馈删除成功: feedbackId={}", id);
@@ -164,7 +164,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         // 查询反馈是否存在
         Feedback feedback = feedbackMapper.selectById(id);
         if (feedback == null) {
-            throw new BusinessException(ErrorCodeEnum.FEEDBACK_NOT_FOUND, "反馈不存在");
+            throw new BusinessException(ResultCode.FEEDBACK_NOT_FOUND, "反馈不存在");
         }
 
         // 更新反馈内容
@@ -177,7 +177,7 @@ public class FeedbackServiceImpl implements FeedbackService {
         int rows = feedbackMapper.updateById(feedback);
         if (rows <= 0) {
             log.error("反馈更新失败: id={}", id);
-            throw new BusinessException(ErrorCodeEnum.SYSTEM_ERROR, "反馈更新失败");
+            throw new BusinessException(ResultCode.SYSTEM_ERROR, "反馈更新失败");
         }
 
         log.info("反馈更新成功: feedbackId={}", id);
@@ -191,14 +191,14 @@ public class FeedbackServiceImpl implements FeedbackService {
         // 查询反馈是否存在
         Feedback feedback = feedbackMapper.selectById(id);
         if (feedback == null) {
-            throw new BusinessException(ErrorCodeEnum.FEEDBACK_NOT_FOUND, "反馈不存在");
+            throw new BusinessException(ResultCode.FEEDBACK_NOT_FOUND, "反馈不存在");
         }
 
         // 删除反馈
         int rows = feedbackMapper.deleteById(id);
         if (rows <= 0) {
             log.error("反馈删除失败: id={}", id);
-            throw new BusinessException(ErrorCodeEnum.SYSTEM_ERROR, "反馈删除失败");
+            throw new BusinessException(ResultCode.SYSTEM_ERROR, "反馈删除失败");
         }
 
         log.info("反馈删除成功: feedbackId={}", id);

@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.medical.smartmedicine.common.base.PageQuery;
 import com.medical.smartmedicine.common.client.OssClient;
-import com.medical.smartmedicine.common.enums.ErrorCodeEnum;
+import com.medical.smartmedicine.common.enums.ResultCode;
 import com.medical.smartmedicine.common.exception.BusinessException;
 import com.medical.smartmedicine.common.result.PageResult;
 import com.medical.smartmedicine.common.util.UserContextHolder;
@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
     public UserVO getUserById(Integer id) {
         User user = userMapper.selectById(id);
         if (user == null) {
-            throw new BusinessException(ErrorCodeEnum.USER_NOT_FOUND);
+            throw new BusinessException(ResultCode.USER_NOT_FOUND);
         }
         return convertToVO(user);
     }
@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserService {
 
         User user = userMapper.selectById(userId);
         if (user == null) {
-            throw new BusinessException(ErrorCodeEnum.USER_NOT_FOUND);
+            throw new BusinessException(ResultCode.USER_NOT_FOUND);
         }
 
         // 更新用户信息
@@ -82,7 +82,7 @@ public class UserServiceImpl implements UserService {
             wrapper.eq(User::getUserTel, updateDTO.getUserTel())
                    .ne(User::getId, userId);
             if (userMapper.selectCount(wrapper) > 0) {
-                throw new BusinessException(ErrorCodeEnum.PHONE_EXISTS);
+                throw new BusinessException(ResultCode.PHONE_EXISTS);
             }
             user.setUserTel(updateDTO.getUserTel());
         }
@@ -104,12 +104,12 @@ public class UserServiceImpl implements UserService {
 
         User user = userMapper.selectById(userId);
         if (user == null) {
-            throw new BusinessException(ErrorCodeEnum.USER_NOT_FOUND);
+            throw new BusinessException(ResultCode.USER_NOT_FOUND);
         }
 
         // 验证旧密码
         if (!passwordEncoder.matches(passwordDTO.getOldPassword(), user.getUserPwd())) {
-            throw new BusinessException(ErrorCodeEnum.OLD_PASSWORD_ERROR);
+            throw new BusinessException(ResultCode.OLD_PASSWORD_ERROR);
         }
 
         // 更新密码
@@ -147,12 +147,12 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(Integer id) {
         User user = userMapper.selectById(id);
         if (user == null) {
-            throw new BusinessException(ErrorCodeEnum.USER_NOT_FOUND);
+            throw new BusinessException(ResultCode.USER_NOT_FOUND);
         }
 
         // 不允许删除管理员
         if (user.getRoleStatus() == 1) {
-            throw new BusinessException(ErrorCodeEnum.ADMIN_DELETE_FORBIDDEN);
+            throw new BusinessException(ResultCode.ADMIN_DELETE_FORBIDDEN);
         }
 
         userMapper.deleteById(id);
