@@ -165,6 +165,16 @@ export default function AdminDashboard() {
                 <div>资讯管理</div>
               </Card>
             </Col>
+            <Col xs={24} sm={12} md={6}>
+              <Card
+                hoverable
+                onClick={() => navigate('/admin/feedbacks')}
+                style={{ textAlign: 'center', cursor: 'pointer' }}
+              >
+                <Typography.Title level={5}>💬</Typography.Title>
+                <div>反馈管理</div>
+              </Card>
+            </Col>
           </Row>
         </Card>
       </Space>

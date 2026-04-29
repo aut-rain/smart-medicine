@@ -30,6 +30,7 @@ const AdminMedicines = lazy(() => import('./pages/admin/AdminMedicines'))
 const AdminIllnesses = lazy(() => import('./pages/admin/AdminIllnesses'))
 const AdminVideos = lazy(() => import('./pages/admin/AdminVideos'))
 const AdminNews = lazy(() => import('./pages/admin/AdminNews'))
+const AdminFeedbacks = lazy(() => import('./pages/admin/AdminFeedbacks'))
 
 const { Header, Content, Footer } = Layout
 
@@ -292,6 +293,14 @@ export default function App() {
             element={
               <AdminRoute>
                 <AdminNews />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/feedbacks"
+            element={
+              <AdminRoute>
+                <AdminFeedbacks />
               </AdminRoute>
             }
           />
