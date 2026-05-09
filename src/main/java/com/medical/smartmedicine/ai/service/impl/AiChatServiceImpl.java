@@ -1,8 +1,10 @@
 package com.medical.smartmedicine.ai.service.impl;
 
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
 import com.medical.smartmedicine.ai.dto.ChatRequest;
 import com.medical.smartmedicine.ai.service.AiChatService;
+import com.medical.smartmedicine.ai.service.HealthIntentGateService;
 import com.medical.smartmedicine.ai.vo.ChatResponse;
 import com.medical.smartmedicine.common.enums.ResultCode;
 import com.medical.smartmedicine.common.exception.BusinessException;
@@ -30,11 +32,13 @@ import reactor.core.publisher.Flux;
 @ConditionalOnClass(ChatClient.class)
 public class AiChatServiceImpl implements AiChatService {
 
+    private static final String HEALTH_ONLY_MESSAGE = "只回答健康问题";
     private static final String NO_RELATED_DATA_MESSAGE = "无相关数据信息,请联系相关医生";
 
     private final ChatClient smartDoctorChatClient;
     private final ChatMemory redisChatMemory;
     private final RagSearchService ragSearchService;
+    private final HealthIntentGateService healthIntentGateService;
 
     @Override
     public ChatResponse chat(ChatRequest request) {
@@ -42,13 +46,13 @@ public class AiChatServiceImpl implements AiChatService {
             log.info("AI Chat请求 - conversationId: {}, message: {}", 
                     request.getConversationId(), request.getMessage());
 
+            if (!healthIntentGateService.classify(request).isHealthRelated()) {
+                return buildFixedResponse(request, HEALTH_ONLY_MESSAGE);
+            }
+
             RagSearchResult ragResult = ragSearchService.search(request.getMessage());
             if (!ragResult.hasEvidence()) {
-                return ChatResponse.builder()
-                        .content(NO_RELATED_DATA_MESSAGE)
-                        .conversationId(request.getConversationId())
-                        .messageId(IdUtil.fastSimpleUUID())
-                        .build();
+                return buildFixedResponse(request, NO_RELATED_DATA_MESSAGE);
             }
 
             // 构建带有会话ID的Memory Advisor
@@ -85,6 +89,10 @@ public class AiChatServiceImpl implements AiChatService {
         try {
             log.info("AI Stream Chat请求 - conversationId: {}, message: {}",
                     request.getConversationId(), request.getMessage());
+
+            if (!healthIntentGateService.classify(request).isHealthRelated()) {
+                return Flux.just(HEALTH_ONLY_MESSAGE);
+            }
 
             RagSearchResult ragResult = ragSearchService.search(request.getMessage());
             if (!ragResult.hasEvidence()) {
@@ -148,5 +156,13 @@ public class AiChatServiceImpl implements AiChatService {
 
     private String buildReferenceSection(RagSearchResult ragResult) {
         return "\n\n参考数据：" + ragResult.buildReferenceText();
+    }
+
+    private ChatResponse buildFixedResponse(ChatRequest request, String content) {
+        return ChatResponse.builder()
+                .content(content)
+                .conversationId(request.getConversationId())
+                .messageId(IdUtil.fastSimpleUUID())
+                .build();
     }
 }

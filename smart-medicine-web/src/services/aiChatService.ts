@@ -15,7 +15,7 @@ export const aiChatService = {
     },
     async stream(data: ChatRequest, onChunk: (text: string) => void) {
         try {
-            const baseUrl = import.meta.env.VITE_API_BASE || 'http://localhost:8080'
+            const baseUrl = import.meta.env.VITE_API_BASE || 'http://localhost:7070'
             const url = `${baseUrl}/api/v1/ai-chat/stream`
 
             console.log('发送 AI 请求:', url, data)

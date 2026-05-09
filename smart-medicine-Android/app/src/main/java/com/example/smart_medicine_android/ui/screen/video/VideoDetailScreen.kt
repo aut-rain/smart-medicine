@@ -34,6 +34,8 @@ import androidx.lifecycle.LifecycleEventObserver
 import coil.compose.AsyncImage
 import com.example.smart_medicine_android.ui.theme.*
 import kotlinx.coroutines.delay
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 /**
  * 视频详情屏幕
@@ -425,6 +427,8 @@ private fun VideoDetailContent(
                             Text(
                                 text = formatTimeIso(time),
                                 style = MaterialTheme.typography.labelMedium,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
                                 color = TextSecondary
                             )
                         }
@@ -514,12 +518,26 @@ private fun ErrorSnackBar(
 }
 
 /**
- * 格式化ISO时间字符串
+ * 格式化时间字符串
  */
 private fun formatTimeIso(isoString: String): String {
     return try {
-        // 简单格式化，去掉毫秒部分
-        isoString.substring(0, isoString.length - 5).replace("T", " ")
+        val inputFormatters = listOf(
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"),
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"),
+            DateTimeFormatter.ISO_LOCAL_DATE_TIME
+        )
+        val outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+
+        for (formatter in inputFormatters) {
+            runCatching {
+                LocalDateTime.parse(isoString.replace("T", " "), formatter)
+            }.getOrNull()?.let { dateTime ->
+                return dateTime.format(outputFormatter)
+            }
+        }
+
+        isoString
     } catch (e: Exception) {
         isoString
     }

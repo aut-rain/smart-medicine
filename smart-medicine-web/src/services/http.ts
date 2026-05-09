@@ -2,7 +2,7 @@ import axios from 'axios'
 import { clearAuth, getToken } from '@/utils/auth'
 
 const http = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE || 'http://localhost:8080',
+  baseURL: import.meta.env.VITE_API_BASE || 'http://localhost:7070',
   timeout: 15000,
 })
 
