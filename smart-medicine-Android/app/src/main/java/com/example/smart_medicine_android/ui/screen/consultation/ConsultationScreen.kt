@@ -28,7 +28,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
@@ -39,6 +41,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.smart_medicine_android.navigation.Screen
 import com.example.smart_medicine_android.ui.theme.*
 
 import org.commonmark.node.Block
@@ -76,6 +79,7 @@ import java.util.Locale
 @Composable
 fun ConsultationScreen(
     onBackClick: () -> Unit,
+    onNavigateToEvidence: (String) -> Unit = {},
     viewModel: ConsultationViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -150,7 +154,8 @@ fun ConsultationScreen(
                         answer = consultation.answer ?: "",
                         isLoading = isLoading,
                         isStreaming = hasPartialContent,
-                        timestamp = consultation.createdAt
+                        timestamp = consultation.createdAt,
+                        onNavigateToEvidence = onNavigateToEvidence
                     )
                 }
             }
@@ -269,7 +274,8 @@ private fun ConsultationItem(
     answer: String,
     timestamp: Long,
     isLoading: Boolean = false,
-    isStreaming: Boolean = false
+    isStreaming: Boolean = false,
+    onNavigateToEvidence: (String) -> Unit = {}
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -286,11 +292,11 @@ private fun ConsultationItem(
             }
             isStreaming && answer.isNotEmpty() -> {
                 // 流式输出中，显示带闪烁光标的内容
-                StreamingMessage(message = answer)
+                StreamingMessage(message = answer, onNavigateToEvidence = onNavigateToEvidence)
             }
             answer.isNotEmpty() -> {
                 // 完成，显示完整内容
-                AIMessage(message = answer)
+                AIMessage(message = answer, onNavigateToEvidence = onNavigateToEvidence)
             }
         }
     }
@@ -323,7 +329,10 @@ private fun UserMessage(message: String) {
 // ==================== AI 消息 ====================
 
 @Composable
-private fun AIMessage(message: String) {
+private fun AIMessage(
+    message: String,
+    onNavigateToEvidence: (String) -> Unit = {}
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Start
@@ -331,7 +340,8 @@ private fun AIMessage(message: String) {
         Column(modifier = Modifier.widthIn(max = 320.dp)) {
             MarkdownText(
                 markdown = message,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                onNavigateToEvidence = onNavigateToEvidence
             )
         }
     }
@@ -367,7 +377,10 @@ private fun LoadingMessage() {
 // ==================== 流式输出消息 ====================
 
 @Composable
-private fun StreamingMessage(message: String) {
+private fun StreamingMessage(
+    message: String,
+    onNavigateToEvidence: (String) -> Unit = {}
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Start
@@ -380,7 +393,8 @@ private fun StreamingMessage(message: String) {
             // Markdown 内容 - 实时渲染
             MarkdownText(
                 markdown = message,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                onNavigateToEvidence = onNavigateToEvidence
             )
 
             // 闪烁光标
@@ -535,10 +549,12 @@ private fun NewConversationDialog(
 @Composable
 private fun MarkdownText(
     markdown: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onNavigateToEvidence: (String) -> Unit = {}
 ) {
+    val normalizedMarkdown = remember(markdown) { normalizeAssistantMarkdown(markdown) }
     // 简单的表格解析：检测markdown表格并在CommonMark之前处理
-    val tableResult = detectAndParseTable(markdown)
+    val tableResult = detectAndParseTable(normalizedMarkdown)
 
     Column(
         modifier = modifier,
@@ -549,33 +565,39 @@ private fun MarkdownText(
             if (tableResult.first.isNotEmpty()) {
                 val parser = Parser.builder().build()
                 val beforeDoc = parser.parse(tableResult.first)
-                renderMarkdownNode(beforeDoc)
+                renderMarkdownNode(beforeDoc, onNavigateToEvidence)
             }
             // 渲染表格
-            RenderSimpleTable(tableResult.second)
+            RenderSimpleTable(tableResult.second, onNavigateToEvidence)
             // 渲染表格后的内容
             if (tableResult.third.isNotEmpty()) {
                 val parser = Parser.builder().build()
                 val afterDoc = parser.parse(tableResult.third)
-                renderMarkdownNode(afterDoc)
+                renderMarkdownNode(afterDoc, onNavigateToEvidence)
             }
         } else {
             // 没有表格，正常解析
             val parser = Parser.builder().build()
-            val document = parser.parse(markdown)
-            renderMarkdownNode(document)
+            val document = parser.parse(normalizedMarkdown)
+            renderMarkdownNode(document, onNavigateToEvidence)
         }
     }
 }
 
 @Composable
-private fun renderMarkdownNode(node: Node) {
+private fun renderMarkdownNode(
+    node: Node,
+    onNavigateToEvidence: (String) -> Unit = {}
+) {
     when (node) {
         is Paragraph -> {
-            Text(
+            ClickableMarkdownText(
                 text = buildAnnotatedString { appendNodeContent(node) },
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color(0xFF1A1A1A)
+                color = Color(0xFF1A1A1A),
+                onLinkClick = { destination ->
+                    handleMarkdownDestination(destination, onNavigateToEvidence)
+                }
             )
         }
         is Heading -> {
@@ -585,12 +607,15 @@ private fun renderMarkdownNode(node: Node) {
                 3 -> MaterialTheme.typography.titleSmall
                 else -> MaterialTheme.typography.bodyLarge
             }
-            Text(
+            ClickableMarkdownText(
                 text = buildAnnotatedString { appendNodeContent(node) },
                 style = style,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF1A1A1A),
-                modifier = Modifier.padding(vertical = 4.dp)
+                modifier = Modifier.padding(vertical = 4.dp),
+                onLinkClick = { destination ->
+                    handleMarkdownDestination(destination, onNavigateToEvidence)
+                }
             )
         }
         is org.commonmark.node.FencedCodeBlock -> {
@@ -632,7 +657,7 @@ private fun renderMarkdownNode(node: Node) {
                 ) {
                     Text("•", style = MaterialTheme.typography.bodyMedium, color = Color(0xFF1A1A1A))
                     Column(modifier = Modifier.weight(1f)) {
-                        renderMarkdownNode(child)
+                        renderMarkdownNode(child, onNavigateToEvidence)
                     }
                 }
                 child = child.next
@@ -648,7 +673,7 @@ private fun renderMarkdownNode(node: Node) {
                 ) {
                     Text("$index.", style = MaterialTheme.typography.bodyMedium, color = Color(0xFF1A1A1A))
                     Column(modifier = Modifier.weight(1f)) {
-                        renderMarkdownNode(child)
+                        renderMarkdownNode(child, onNavigateToEvidence)
                     }
                 }
                 index++
@@ -669,11 +694,14 @@ private fun renderMarkdownNode(node: Node) {
                     Column(modifier = Modifier.weight(1f)) {
                         var child = node.firstChild
                         while (child != null) {
-                            Text(
+                            ClickableMarkdownText(
                                 text = buildAnnotatedString { appendNodeContent(child) },
                                 style = MaterialTheme.typography.bodyMedium,
                                 fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
-                                color = Color(0xFF666666)
+                                color = Color(0xFF666666),
+                                onLinkClick = { destination ->
+                                    handleMarkdownDestination(destination, onNavigateToEvidence)
+                                }
                             )
                             child = child.next
                         }
@@ -685,14 +713,14 @@ private fun renderMarkdownNode(node: Node) {
             // 处理其他扩展块
             var child = node.firstChild
             while (child != null) {
-                renderMarkdownNode(child)
+                renderMarkdownNode(child, onNavigateToEvidence)
                 child = child.next
             }
         }
         else -> {
             var child = node.firstChild
             while (child != null) {
-                renderMarkdownNode(child)
+                renderMarkdownNode(child, onNavigateToEvidence)
                 child = child.next
             }
         }
@@ -782,6 +810,14 @@ private fun parseTableRow(line: String): List<String> {
  */
 @Composable
 private fun RenderSimpleTable(table: SimpleTable) {
+    RenderSimpleTable(table = table, onNavigateToEvidence = {})
+}
+
+@Composable
+private fun RenderSimpleTable(
+    table: SimpleTable,
+    onNavigateToEvidence: (String) -> Unit
+) {
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -811,7 +847,8 @@ private fun RenderSimpleTable(table: SimpleTable) {
                             modifier = Modifier.weight(1f),
                             fontWeight = FontWeight.Bold,
                             color = PrimaryBlue,
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
+                            onNavigateToEvidence = onNavigateToEvidence
                         )
                     }
                 }
@@ -832,7 +869,8 @@ private fun RenderSimpleTable(table: SimpleTable) {
                             modifier = Modifier.weight(1f),
                             fontWeight = FontWeight.Normal,
                             color = Color(0xFF333333),
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
+                            onNavigateToEvidence = onNavigateToEvidence
                         )
                     }
                 }
@@ -851,12 +889,13 @@ private fun MarkdownCellText(
     modifier: Modifier = Modifier,
     fontWeight: FontWeight = FontWeight.Normal,
     color: Color = Color.Unspecified,
-    textAlign: TextAlign? = null
+    textAlign: TextAlign? = null,
+    onNavigateToEvidence: (String) -> Unit = {}
 ) {
     val parser = Parser.builder().build()
-    val document = parser.parse(markdown)
+    val document = parser.parse(normalizeAssistantMarkdown(markdown))
 
-    Text(
+    ClickableMarkdownText(
         text = buildAnnotatedString {
             var current = document.firstChild
             while (current != null) {
@@ -869,6 +908,36 @@ private fun MarkdownCellText(
         fontWeight = fontWeight,
         color = color,
         textAlign = textAlign
+    ) { destination ->
+        handleMarkdownDestination(destination, onNavigateToEvidence)
+    }
+}
+
+@Composable
+private fun ClickableMarkdownText(
+    text: AnnotatedString,
+    modifier: Modifier = Modifier,
+    style: androidx.compose.ui.text.TextStyle,
+    fontWeight: FontWeight? = null,
+    fontStyle: androidx.compose.ui.text.font.FontStyle? = null,
+    color: Color = Color.Unspecified,
+    textAlign: TextAlign? = null,
+    onLinkClick: (String) -> Unit
+) {
+    ClickableText(
+        text = text,
+        modifier = modifier,
+        style = style.copy(
+            color = color,
+            fontWeight = fontWeight ?: style.fontWeight,
+            fontStyle = fontStyle ?: style.fontStyle,
+            textAlign = textAlign ?: style.textAlign
+        ),
+        onClick = { offset ->
+            text.getStringAnnotations(tag = LINK_TAG, start = offset, end = offset)
+                .firstOrNull()
+                ?.let { annotation -> onLinkClick(annotation.item) }
+        }
     )
 }
 
@@ -912,14 +981,11 @@ private fun androidx.compose.ui.text.AnnotatedString.Builder.appendInlineNodeCon
             }
             is Link -> {
                 val child = current.firstChild
-                withStyle(
-                    SpanStyle(
-                        color = PrimaryBlue,
-                        textDecoration = TextDecoration.Underline
-                    )
-                ) {
+                pushStringAnnotation(tag = LINK_TAG, annotation = current.destination)
+                withStyle(linkSpanStyle()) {
                     appendInlineNodeContent(child, defaultColor)
                 }
+                pop()
             }
             is Paragraph -> {
                 val child = current.firstChild
@@ -964,20 +1030,90 @@ private fun androidx.compose.ui.text.AnnotatedString.Builder.appendNodeContent(n
                 }
             }
             is Link -> {
-                withStyle(
-                    SpanStyle(
-                        color = PrimaryBlue,
-                        textDecoration = TextDecoration.Underline
-                    )
-                ) {
+                pushStringAnnotation(tag = LINK_TAG, annotation = current.destination)
+                withStyle(linkSpanStyle()) {
                     appendNodeContent(current)
                 }
+                pop()
             }
             is HardLineBreak -> append("\n")
             is SoftLineBreak -> append(" ")
             else -> appendNodeContent(current)
         }
         current = current.next
+    }
+}
+
+private const val LINK_TAG = "markdown_link"
+
+private fun linkSpanStyle() = SpanStyle(
+    color = PrimaryBlue,
+    fontWeight = FontWeight.SemiBold,
+    textDecoration = TextDecoration.Underline
+)
+
+private fun normalizeAssistantMarkdown(markdown: String): String {
+    var inCodeFence = false
+    val normalized = markdown
+        .replace("\r\n", "\n")
+        .replace(Regex("\n{3,}"), "\n\n")
+        .lines()
+        .joinToString("\n") { line ->
+            if (line.trimStart().startsWith("```")) {
+                inCodeFence = !inCodeFence
+                return@joinToString line
+            }
+            if (inCodeFence) {
+                return@joinToString line
+            }
+
+            line
+                .replace(Regex("^(\\s{0,3}#{1,6})([^\\s#])"), "$1 $2")
+                .replace(Regex("^(\\s*\\d+\\.)([^\\s])"), "$1 $2")
+                .replace(Regex("^(\\s*[-*+])(\\S)"), "$1 $2")
+                .replace(Regex("^(\\s*>)([^\\s])"), "$1 $2")
+        }
+
+    return linkEvidenceMarkers(normalized)
+}
+
+private fun linkEvidenceMarkers(markdown: String): String {
+    val markerLinks = Regex("\\[(【资料\\d+】)]\\((/(?:illness|medicine|science-video|news)/\\d+)\\)")
+        .findAll(markdown)
+        .associate { it.groupValues[1] to it.groupValues[2] }
+
+    if (markerLinks.isEmpty()) {
+        return markdown
+    }
+
+    return Regex("(?<!\\[)(【资料\\d+】)(?!]\\()").replace(markdown) { match ->
+        val marker = match.value
+        val url = markerLinks[marker]
+        if (url == null) marker else "[$marker]($url)"
+    }
+}
+
+private fun handleMarkdownDestination(
+    destination: String,
+    onNavigateToEvidence: (String) -> Unit
+) {
+    androidEvidenceRoute(destination)?.let { route ->
+        onNavigateToEvidence(route)
+    }
+}
+
+private fun androidEvidenceRoute(destination: String): String? {
+    val cleanDestination = destination.substringBefore("?").substringBefore("#").trim()
+    val match = Regex("^/(illness|medicine|science-video|news)/(\\d+)$").matchEntire(cleanDestination)
+        ?: return null
+    val id = match.groupValues[2].toIntOrNull() ?: return null
+
+    return when (match.groupValues[1]) {
+        "illness" -> Screen.IllnessDetail.createRoute(id)
+        "medicine" -> Screen.MedicineDetail.createRoute(id)
+        "science-video" -> Screen.VideoDetail.createRoute(id)
+        "news" -> Screen.NewsDetail.createRoute(id)
+        else -> null
     }
 }
 

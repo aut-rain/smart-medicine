@@ -108,6 +108,7 @@ object NetworkModule {
                             preferences.remove(USER_ID_KEY)
                             preferences.remove(USERNAME_KEY)
                         }
+                        AppModule.clearAuthCache()
                         Log.d("NetworkModule", "Local tokens cleared")
 
                         // 通知应用层登出

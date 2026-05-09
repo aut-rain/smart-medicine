@@ -1,6 +1,7 @@
 package com.example.smart_medicine_android.data.repository
 
 import com.example.smart_medicine_android.data.local.datastore.UserPreferences
+import com.example.smart_medicine_android.di.AppModule
 import com.example.smart_medicine_android.data.network.api.AuthApi
 import com.example.smart_medicine_android.data.network.model.*
 import kotlinx.coroutines.flow.firstOrNull
@@ -49,6 +50,7 @@ class AuthRepository(
                     username = tokenResponse.userAccount ?: "",
                     email = tokenResponse.userName ?: ""
                 )
+                AppModule.refreshCache()
                 Result.success(userInfo)
             } else {
                 Result.failure(ApiException(response.code ?: "UNKNOWN", response.message ?: "Unknown error"))
@@ -108,6 +110,7 @@ class AuthRepository(
                     username = tokenResponse.userAccount ?: "",
                     email = tokenResponse.userName ?: ""
                 )
+                AppModule.refreshCache()
                 Result.success(userInfo)
             } else {
                 Result.failure(ApiException(response.code ?: "UNKNOWN", response.message ?: "Unknown error"))
@@ -149,6 +152,7 @@ class AuthRepository(
             val response = authApi.logout()
             // 无论 API 调用成功与否，都清除本地数据
             userPreferences.clear()
+            AppModule.clearAuthCache()
             if (response.isSuccess) {
                 Result.success(Unit)
             } else {
@@ -157,6 +161,7 @@ class AuthRepository(
         } catch (e: Exception) {
             // 即使网络请求失败，也清除本地数据
             userPreferences.clear()
+            AppModule.clearAuthCache()
             Result.failure(e)
         }
     }
@@ -176,6 +181,7 @@ class AuthRepository(
                     username = userInfo.userAccount ?: "",
                     email = userInfo.userEmail ?: ""
                 )
+                AppModule.refreshCache()
                 Result.success(userInfo)
             } else {
                 Result.failure(ApiException(response.code ?: "UNKNOWN", response.message ?: "Unknown error"))
@@ -201,6 +207,7 @@ class AuthRepository(
                     username = updatedUserInfo.userAccount ?: "",
                     email = updatedUserInfo.userEmail ?: ""
                 )
+                AppModule.refreshCache()
                 Result.success(updatedUserInfo)
             } else {
                 Result.failure(ApiException(response.code ?: "UNKNOWN", response.message ?: "Unknown error"))
@@ -256,6 +263,7 @@ class AuthRepository(
             } else {
                 // Token 刷新失败，清除本地数据
                 userPreferences.clear()
+                AppModule.clearAuthCache()
                 Result.failure(ApiException(response.code ?: "UNKNOWN", response.message ?: "Unknown error"))
             }
         } catch (e: Exception) {

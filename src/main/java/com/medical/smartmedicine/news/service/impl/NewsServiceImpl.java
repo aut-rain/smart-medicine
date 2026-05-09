@@ -16,6 +16,7 @@ import com.medical.smartmedicine.news.dto.NewsUpdateDTO;
 import com.medical.smartmedicine.news.service.NewsService;
 import com.medical.smartmedicine.news.vo.NewsDetailVO;
 import com.medical.smartmedicine.news.vo.NewsVO;
+import com.medical.smartmedicine.rag.service.MedicalNewsContentSyncService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,7 @@ public class NewsServiceImpl implements NewsService {
 
     private final MedicalNewsMapper newsMapper;
     private final OssClient ossClient;
+    private final MedicalNewsContentSyncService medicalNewsContentSyncService;
 
     @Override
     public PageResult<NewsVO> listNews(NewsQueryDTO queryDTO) {
@@ -152,6 +154,7 @@ public class NewsServiceImpl implements NewsService {
         MedicalNews news = BeanUtil.copyProperties(createDTO, MedicalNews.class);
         news.setViewCount(0);
         newsMapper.insert(news);
+        trySyncNewsContent(news.getId());
         return convertToVO(news);
     }
 
@@ -189,6 +192,7 @@ public class NewsServiceImpl implements NewsService {
         }
 
         newsMapper.updateById(news);
+        trySyncNewsContent(id);
         return convertToVO(newsMapper.selectById(id));
     }
 
@@ -306,5 +310,13 @@ public class NewsServiceImpl implements NewsService {
         // 从OSS读取Markdown内容
         String markdownContent = readMarkdownFromOss(news.getMarkdownOssPath());
         return markdownContent;
+    }
+
+    private void trySyncNewsContent(Integer newsId) {
+        try {
+            medicalNewsContentSyncService.syncNews(newsId);
+        } catch (Exception e) {
+            log.warn("同步医疗资讯正文缓存失败: newsId={}", newsId, e);
+        }
     }
 }

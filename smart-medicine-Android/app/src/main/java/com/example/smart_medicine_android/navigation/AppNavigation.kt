@@ -202,7 +202,8 @@ fun AppNavHost(
             // AI 咨询页面
             composable(Screen.Consultation.route) {
                 ConsultationScreen(
-                    onBackClick = { navController.popBackStack() }
+                    onBackClick = { navController.popBackStack() },
+                    onNavigateToEvidence = { route -> navController.navigate(route) }
                 )
             }
 

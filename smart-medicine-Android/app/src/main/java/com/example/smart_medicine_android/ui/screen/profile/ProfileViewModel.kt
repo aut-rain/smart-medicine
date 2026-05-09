@@ -13,7 +13,8 @@ import kotlinx.coroutines.launch
  * 用户中心状态
  */
 data class ProfileUiState(
-    val isLoading: Boolean = false,
+    val isLoading: Boolean = true,
+    val hasCheckedLogin: Boolean = false,
     val isLoggedIn: Boolean = false,
     val userInfo: UserInfo? = null,
     val errorMessage: String? = null
@@ -38,13 +39,27 @@ class ProfileViewModel(
      */
     private fun checkLoginStatus() {
         viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true)
             val loggedIn = authRepository.isLoggedIn()
-            _uiState.value = _uiState.value.copy(isLoggedIn = loggedIn)
 
             if (loggedIn) {
                 loadUserInfo()
+            } else {
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    hasCheckedLogin = true,
+                    isLoggedIn = false,
+                    userInfo = null
+                )
             }
         }
+    }
+
+    /**
+     * 页面重新回到前台时刷新，避免编辑资料/服务端变更后继续展示旧状态。
+     */
+    fun refreshUserInfo() {
+        checkLoginStatus()
     }
 
     /**
@@ -59,12 +74,14 @@ class ProfileViewModel(
             result.onSuccess { userInfo ->
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
+                    hasCheckedLogin = true,
                     isLoggedIn = true,
                     userInfo = userInfo
                 )
             }.onFailure { error ->
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
+                    hasCheckedLogin = true,
                     errorMessage = error.message ?: "加载用户信息失败"
                 )
             }
@@ -83,6 +100,7 @@ class ProfileViewModel(
             result.onSuccess {
                 _uiState.value = ProfileUiState(
                     isLoading = false,
+                    hasCheckedLogin = true,
                     isLoggedIn = false
                 )
             }.onFailure { error ->

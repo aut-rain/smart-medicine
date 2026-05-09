@@ -98,6 +98,17 @@ object AppModule {
     }
 
     /**
+     * 清除内存中的认证缓存。
+     * DataStore 是最终数据源；当登出或 token 失效时，必须同步清掉这层内存缓存，
+     * 否则部分页面会继续拿到旧 userId/token。
+     */
+    fun clearAuthCache() {
+        cachedUserId = null
+        cachedAccessToken = null
+        android.util.Log.d("AppModule", "Auth cache cleared")
+    }
+
+    /**
      * 从DataStore重新加载userId和token到缓存
      * 用于登录后更新缓存
      */
@@ -303,8 +314,6 @@ object AppModule {
     suspend fun clearAll() {
         userPreferences.clear()
         database.clearAllTables()
-        // 清除缓存
-        cachedUserId = null
-        cachedAccessToken = null
+        clearAuthCache()
     }
 }

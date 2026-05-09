@@ -31,7 +31,7 @@ CREATE TABLE `feedback` (
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -40,7 +40,7 @@ CREATE TABLE `feedback` (
 
 LOCK TABLES `feedback` WRITE;
 /*!40000 ALTER TABLE `feedback` DISABLE KEYS */;
-INSERT INTO `feedback` VALUES (6,'路人甲','31952874@qq.com','测试一号','测试这个系统有问题吗？','2022-05-03 16:13:59','2022-05-03 16:13:59'),(7,'路人乙','31952874@qq.com','测试二号','惆怅长岑长错错错错错错','2022-05-03 16:14:20','2022-05-03 16:14:20'),(8,'朱忠懿','2545946621@qq.com','论文好难写','大学牲','2025-10-23 12:20:22','2025-10-23 12:20:22'),(9,'zzy','test@example.com','测试反馈功能','验证userId=2是否可以成功提交反馈','2025-12-03 18:58:04','2025-12-03 18:58:04'),(10,'zzy','test@test.com','测试反馈','这是测试内容','2025-12-03 19:20:33','2025-12-03 19:20:33'),(11,'zzy','test@test.com','测试反馈','这是测试内容','2025-12-03 19:26:24','2025-12-03 19:26:24'),(12,'admin','user@example.com','建议增加药品搜索功能','希望可以按药品名称快速搜索...','2025-12-04 20:38:00','2025-12-04 20:38:00'),(14,'zhangsan','user@example.com','建议增加药品搜索功能1111111111','希望可以按药品名称快速搜索...','2025-12-06 04:26:22','2025-12-06 04:26:22');
+INSERT INTO `feedback` VALUES (9,'zzy','test@example.com','测试反馈功能','验证userId=2是否可以成功提交反馈','2025-12-03 18:58:04','2025-12-03 18:58:04'),(10,'zzy','test@test.com','测试反馈','这是测试内容','2025-12-03 19:20:33','2025-12-03 19:20:33'),(11,'zzy','test@test.com','测试反馈','这是测试内容','2025-12-03 19:26:24','2025-12-03 19:26:24'),(12,'admin','user@example.com','建议增加药品搜索功能','希望可以按药品名称快速搜索...','2025-12-04 20:38:00','2025-12-04 20:38:00'),(14,'zhangsan','user@example.com','建议增加药品搜索功能1111111111','希望可以按药品名称快速搜索...','2025-12-06 04:26:22','2025-12-06 04:26:22');
 /*!40000 ALTER TABLE `feedback` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -59,7 +59,7 @@ CREATE TABLE `history` (
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=203 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=232 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -68,7 +68,7 @@ CREATE TABLE `history` (
 
 LOCK TABLES `history` WRITE;
 /*!40000 ALTER TABLE `history` DISABLE KEYS */;
-INSERT INTO `history` VALUES (126,4,'10,无',1,'2022-05-03 16:09:34','2022-05-03 16:09:34'),(127,4,'10,无',1,'2022-05-03 16:09:40','2022-05-03 16:09:40'),(128,4,'病毒性感冒',2,'2022-05-03 16:09:48','2022-05-03 16:09:48'),(129,4,'10,无',1,'2022-05-03 16:09:52','2022-05-03 16:09:52'),(130,4,'湿疹',2,'2022-05-03 16:12:15','2022-05-03 16:12:15'),(131,4,'偏头痛',2,'2022-05-03 16:12:49','2022-05-03 16:12:49'),(132,5,'7,无',1,'2022-05-03 16:17:41','2022-05-03 16:17:41'),(133,5,'湿疹',2,'2022-05-03 16:17:53','2022-05-03 16:17:53'),(134,5,'感冒',2,'2022-05-03 16:18:08','2022-05-03 16:18:08'),(135,5,'17,无',1,'2022-05-03 16:18:22','2022-05-03 16:18:22'),(136,5,'17,溃疡',1,'2022-05-03 16:18:28','2022-05-03 16:18:28'),(137,5,'溃疡',2,'2022-05-03 16:18:28','2022-05-03 16:18:28'),(138,5,'17,溃疡',1,'2022-05-03 16:26:48','2022-05-03 16:26:48'),(139,5,'溃疡',2,'2022-05-03 16:26:48','2022-05-03 16:26:48'),(140,5,'17,溃疡',1,'2022-05-03 16:28:20','2022-05-03 16:28:20'),(141,5,'溃疡',2,'2022-05-03 16:28:20','2022-05-03 16:28:20'),(142,5,'17,溃疡',1,'2022-05-03 16:33:52','2022-05-03 16:33:52'),(143,5,'溃疡',2,'2022-05-03 16:33:52','2022-05-03 16:33:52'),(144,5,'溃疡',2,'2022-05-03 16:34:08','2022-05-03 16:34:08'),(145,5,'7,无',1,'2022-05-03 16:37:57','2022-05-03 16:37:57'),(146,5,'9,无',1,'2022-05-03 16:38:34','2022-05-03 16:38:34'),(147,5,'9,无',1,'2022-05-03 16:41:59','2022-05-03 16:41:59'),(148,5,'9,无',1,'2022-05-03 16:42:14','2022-05-03 16:42:14'),(149,5,'9,无',1,'2022-05-03 16:42:45','2022-05-03 16:42:45'),(150,5,'9,无',1,'2022-05-03 16:43:54','2022-05-03 16:43:54'),(151,5,'9,无',1,'2022-05-03 16:44:26','2022-05-03 16:44:26'),(152,5,'9,无',1,'2022-05-03 16:44:45','2022-05-03 16:44:45'),(153,5,'2,无',1,'2022-05-03 16:44:51','2022-05-03 16:44:51'),(154,5,'2,无',1,'2022-05-03 16:45:46','2022-05-03 16:45:46'),(155,5,'1',3,'2022-05-07 15:34:34','2022-05-07 15:34:34'),(156,4,'牙周炎',2,'2022-07-14 19:32:05','2022-07-14 19:32:05'),(157,4,'9,无',1,'2022-07-14 19:32:52','2022-07-14 19:32:52'),(158,4,'1,无',1,'2022-07-14 19:32:56','2022-07-14 19:32:56'),(159,4,'17,无',1,'2022-07-14 19:32:59','2022-07-14 19:32:59'),(160,4,'感冒',3,'2025-10-22 20:02:38','2025-10-22 20:02:38'),(161,4,'发炎',3,'2025-10-22 20:02:53','2025-10-22 20:02:53'),(162,4,'头疼',3,'2025-10-22 20:03:03','2025-10-22 20:03:03'),(163,4,'7,无',1,'2025-10-22 20:04:38','2025-10-22 20:04:38'),(164,4,'7,无',1,'2025-10-22 20:04:41','2025-10-22 20:04:41'),(165,4,'1,无',1,'2025-10-22 20:30:00','2025-10-22 20:30:00'),(166,4,'16,无',1,'2025-10-22 20:30:13','2025-10-22 20:30:13'),(167,4,'发炎',3,'2025-10-22 20:30:20','2025-10-22 20:30:20'),(168,4,'感冒',3,'2025-10-22 20:31:13','2025-10-22 20:31:13'),(169,4,'感冒',2,'2025-10-22 20:32:16','2025-10-22 20:32:16'),(170,4,'病毒性感冒',2,'2025-10-22 20:32:21','2025-10-22 20:32:21'),(171,4,'感冒',2,'2025-10-22 23:38:44','2025-10-22 23:38:44'),(172,4,'感冒灵颗粒',2,'2025-10-22 23:38:58','2025-10-22 23:38:58'),(173,4,'感冒灵颗粒',2,'2025-10-22 23:39:12','2025-10-22 23:39:12'),(174,4,'感冒',2,'2025-10-22 23:39:43','2025-10-22 23:39:43'),(175,4,'病毒性感冒',2,'2025-10-22 23:39:49','2025-10-22 23:39:49'),(176,4,'999感冒灵颗粒',3,'2025-10-23 00:01:43','2025-10-23 00:01:43'),(177,4,'湿疹',2,'2025-10-23 00:05:55','2025-10-23 00:05:55'),(178,4,'感冒',2,'2025-10-23 09:58:11','2025-10-23 09:58:11'),(179,4,'999感冒灵颗粒',3,'2025-10-23 10:10:23','2025-10-23 10:10:23'),(180,4,'999感冒灵颗粒',3,'2025-10-23 10:10:33','2025-10-23 10:10:33'),(181,4,'病毒性感冒',2,'2025-10-23 10:10:42','2025-10-23 10:10:42'),(182,4,'感冒灵颗粒',2,'2025-10-23 10:10:52','2025-10-23 10:10:52'),(183,4,'999感冒灵颗粒',3,'2025-10-23 10:11:20','2025-10-23 10:11:20'),(184,4,'感冒灵颗粒',2,'2025-10-23 10:25:15','2025-10-23 10:25:15'),(185,4,'感冒灵颗粒',2,'2025-10-23 10:25:29','2025-10-23 10:25:29'),(186,4,'999感冒灵颗粒',3,'2025-10-23 10:25:59','2025-10-23 10:25:59'),(187,4,'感冒灵',3,'2025-10-23 10:29:48','2025-10-23 10:29:48'),(188,4,'感冒灵',3,'2025-10-23 10:29:52','2025-10-23 10:29:52'),(189,4,'感冒灵颗粒',2,'2025-10-23 10:29:55','2025-10-23 10:29:55'),(190,4,'感冒灵颗粒',2,'2025-10-23 10:30:04','2025-10-23 10:30:04'),(191,4,'感冒灵颗粒',3,'2025-10-23 10:30:22','2025-10-23 10:30:22'),(192,4,'湿疹',2,'2025-10-23 12:18:33','2025-10-23 12:18:33'),(193,4,'感冒灵颗粒',3,'2025-10-23 12:18:45','2025-10-23 12:18:45'),(194,4,'病毒性感冒',2,'2025-10-23 12:21:42','2025-10-23 12:21:42'),(195,4,'病毒性感冒',2,'2025-10-23 13:15:54','2025-10-23 13:15:54'),(196,16,'湿疹',2,'2025-10-23 23:42:24','2025-10-23 23:42:24'),(197,16,'病毒性感冒',2,'2025-10-23 23:42:28','2025-10-23 23:42:28'),(200,1,'999皮炎平',4,'2025-12-05 19:59:48','2025-12-05 20:01:40'),(201,1,'布洛芬缓释胶囊',4,'2025-12-05 20:00:01','2025-12-05 20:02:46'),(202,1,'甲硝唑',4,'2025-12-05 20:01:05','2025-12-05 20:01:05');
+INSERT INTO `history` VALUES (208,1,'便秘',2,'2026-02-21 08:48:47','2026-02-21 08:48:47'),(209,1,'湿疹',2,'2026-02-21 08:50:15','2026-04-28 17:41:35'),(210,1,'病毒性感冒',2,'2026-02-21 08:50:49','2026-05-05 12:39:00'),(211,1,'牙周炎',2,'2026-02-21 08:51:09','2026-02-24 06:57:20'),(212,1,'1111',2,'2026-02-21 08:51:57','2026-02-21 12:29:59'),(213,1,'111',2,'2026-02-21 12:29:54','2026-02-21 12:29:54'),(214,1,'甲硝唑',4,'2026-02-21 13:18:10','2026-02-24 04:53:45'),(215,1,'胃溃疡',2,'2026-02-21 13:20:01','2026-02-21 13:20:01'),(216,1,'胃溃疡',2,'2026-02-21 13:20:01','2026-02-21 13:20:01'),(217,1,'999皮炎平',4,'2026-02-21 13:26:14','2026-04-28 17:52:27'),(218,1,'风寒感冒',2,'2026-02-21 13:26:22','2026-02-21 13:26:22'),(219,1,'风寒感冒',2,'2026-02-21 13:26:22','2026-02-21 13:26:22'),(220,1,'阿莫西林胶囊',4,'2026-02-21 13:26:25','2026-02-21 13:26:25'),(221,1,'999感冒灵颗粒',4,'2026-02-21 13:26:29','2026-05-05 12:07:41'),(222,1,'布洛芬缓释胶囊',4,'2026-02-21 13:26:32','2026-05-05 12:07:27'),(223,1,'三九胃泰颗粒',4,'2026-02-21 13:32:16','2026-02-21 13:32:16'),(224,1,'七步洗手法',5,'2026-02-23 14:12:41','2026-04-28 17:57:24'),(225,1,'用药安全科普',5,'2026-02-23 14:12:51','2026-02-24 09:02:36'),(226,1,'8小时睡眠论可能是错的！盲目追求睡够8小时，或许会产生巨大压力',6,'2026-02-23 16:26:50','2026-04-28 17:58:38'),(227,1,'三款茶饮清湿热、健脾祛湿养心神',6,'2026-02-23 16:27:43','2026-02-23 16:27:55'),(228,1,'睡眠不好该如何对症调理',6,'2026-02-23 17:36:08','2026-02-24 09:05:35'),(229,1,'扁桃体发炎',2,'2026-02-23 17:36:26','2026-02-23 17:36:26'),(230,1,'冬季手脚干裂起皮，不只是干燥缺水',6,'2026-02-24 04:49:56','2026-02-24 04:49:56'),(231,1,'口腔溃疡',2,'2026-03-11 08:41:11','2026-03-19 03:59:41');
 /*!40000 ALTER TABLE `history` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -89,8 +89,9 @@ CREATE TABLE `illness` (
   `pageviews` int DEFAULT '0' COMMENT '浏览量',
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  PRIMARY KEY (`id`) USING BTREE,
+  FULLTEXT KEY `ft_illness_rag` (`illness_name`,`include_reason`,`illness_symptom`,`special_symptom`)
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -158,6 +159,74 @@ INSERT INTO `illness_medicine` VALUES (6,3,1,'2022-05-03 16:10:35','2022-05-03 1
 UNLOCK TABLES;
 
 --
+-- Table structure for table `medical_news`
+--
+
+DROP TABLE IF EXISTS `medical_news`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `medical_news` (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `news_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '资讯标题',
+  `news_summary` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '资讯摘要（列表展示）',
+  `cover_oss_path` varchar(500) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '封面图OSS路径（smart-medicine/news/covers/xxx.jpg）',
+  `markdown_oss_path` varchar(500) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Markdown文件OSS路径（smart-medicine/news/content/xxx.md）',
+  `category` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '分类',
+  `author` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '作者',
+  `status` tinyint DEFAULT '0' COMMENT '状态：0-草稿，1-已发布',
+  `view_count` int DEFAULT '0' COMMENT '浏览量',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_status` (`status`),
+  KEY `idx_category` (`category`),
+  KEY `idx_create_time` (`create_time`),
+  FULLTEXT KEY `ft_medical_news_rag` (`news_name`,`news_summary`,`category`,`author`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='医疗资讯表';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `medical_news`
+--
+
+LOCK TABLES `medical_news` WRITE;
+/*!40000 ALTER TABLE `medical_news` DISABLE KEYS */;
+INSERT INTO `medical_news` VALUES (1,'emo刷屏了！负面情绪如何排解','emo刷屏了！负面情绪如何排解','https://img-zzy.oss-cn-beijing.aliyuncs.com/smart-medicine/images/945a19d689f54f3292be2a82fc8eb1d3.jpg','https://img-zzy.oss-cn-beijing.aliyuncs.com/smart-medicine/files/53f1b7a3238d45c0a6ac9e865807d5f9.md','心情','zzy',1,2,'2026-02-23 12:57:27','2026-02-24 00:18:51'),(2,'冬季手脚干裂起皮，不只是干燥缺水','冬季手脚干裂起皮，不只是干燥缺水','https://img-zzy.oss-cn-beijing.aliyuncs.com/smart-medicine/images/6bbf52303c834a8b9c99aa6c365602a6.jpg','https://img-zzy.oss-cn-beijing.aliyuncs.com/smart-medicine/files/372244f8d7b44bcaa3b4af52400e4cb9.md','健康','zzy',1,4,'2026-02-23 22:53:41','2026-02-24 00:19:38'),(3,'三款茶饮清湿热、健脾祛湿养心神','三款茶饮清湿热、健脾祛湿养心神','https://img-zzy.oss-cn-beijing.aliyuncs.com/smart-medicine/images/8194ab7c861b4cf5b94ead1baeb84694.jpg','https://img-zzy.oss-cn-beijing.aliyuncs.com/smart-medicine/files/d5d69dc1240c4820987868d887915ae5.md','养生','zzy',1,8,'2026-02-23 22:54:42','2026-02-24 00:19:26'),(4,'睡眠不好该如何对症调理','睡眠不好该如何对症调理','https://img-zzy.oss-cn-beijing.aliyuncs.com/smart-medicine/images/b6e64563da0449bf8241e3af862ebc60.jpg','https://img-zzy.oss-cn-beijing.aliyuncs.com/smart-medicine/files/18294d3d8a5c43f49ab7bfebf3015b9f.md','睡眠','zzy',1,18,'2026-02-23 23:56:02','2026-02-24 00:19:11'),(5,'8小时睡眠论可能是错的！盲目追求睡够8小时，或许会产生巨大压力','8小时睡眠论可能是错的！盲目追求睡够8小时，或许会产生巨大压力','https://img-zzy.oss-cn-beijing.aliyuncs.com/smart-medicine/images/cf4ba1c8cf27425680ae521ab063c35b.jpg','https://img-zzy.oss-cn-beijing.aliyuncs.com/smart-medicine/files/aae27832c60d438588879ba10f16c5ec.md','睡眠','zzy',1,3,'2026-02-23 23:58:12','2026-03-11 16:53:23');
+/*!40000 ALTER TABLE `medical_news` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `medical_news_content`
+--
+
+DROP TABLE IF EXISTS `medical_news_content`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `medical_news_content` (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `news_id` int NOT NULL COMMENT '医疗资讯ID',
+  `plain_content` mediumtext COLLATE utf8mb4_unicode_ci COMMENT '去除Markdown标记后的正文纯文本',
+  `content_hash` varchar(64) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '正文内容SHA-256哈希',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_news_id` (`news_id`),
+  KEY `idx_update_time` (`update_time`),
+  FULLTEXT KEY `ft_plain_content` (`plain_content`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='医疗资讯正文缓存表';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `medical_news_content`
+--
+
+LOCK TABLES `medical_news_content` WRITE;
+/*!40000 ALTER TABLE `medical_news_content` DISABLE KEYS */;
+INSERT INTO `medical_news_content` VALUES (1,1,'emo刷屏了！负面情绪如何排解 关于“emo”的含义 　　医疗资讯网了解到有一种观点认为，它原本是一种情绪化的音乐风格，在互联网世界里，则衍生出“忧郁”“伤感”“心情低落”等多重含义。 　　也有一种解释是，“emo”是英文emotional的缩写，形容一些不稳定的情绪时都可以用这个词，相关意思可以延展为“不开心”“我太难了”等等。 　　不过，伴随着这个词的流行，其使用范围也可能会脱离原本的含义，甚至有时没有什么特别的意思，只是使用者的一种自嘲，或者用来互相调侃。 　　虽然是一个用来表达情绪的词，但心理学专家宋广文认为，心理学目前对其没有明确的界定。最初出现时，网友可能会觉得这个新词有趣，从而感兴趣。 　　“另外，现代社会大家都很忙，工作不顺等可能常常使人处于一种紧张或压力的状态中，当‘emo’出现时，恰好符合人们表达情绪的需求。”他说。 　　互相打气 告别“emo” 　　不过 ，除了“emo”这个词本身，从心理学角度来说，情绪本身没有对错，但如果负面情绪长期积累，就有可能影响正常生活节奏，甚至可能引发疾病。 　　医疗资讯网了解到生活中不如意之事太过常见，需要以乐观心态面对。因此，很多网友开启了告别“emo”的模式，或者录一段积极生活的短视频，互相打气，“消解负面情绪，和心情乌云说拜拜！” 　　有人会在感觉到委屈和颓废时，翻一翻经典名著，“最近常看《道德经》，学习古人的智慧，读到‘上善若水’，会觉得比较治愈。也提醒自己不要过于追求完美，学会包容别人。” 　　或者，如果一段时间心情烦躁，有人会选择找个安静的地方独处、放空，“选择一条安全的路线，坐公交车到最后一站，看看风景，内心会平和很多。” 　　也有人选择正视那些令人“emo”的情绪，“负面情绪让我们不舒服，但不代表它是错的。只不过，情绪的表达方式有高下，我们可以学习更多适合自己的健康表达方式。” 　　了解自身需要 寻找合适的排解方式 　　的确，情绪是我们内心需要的表达，首先察觉它、接纳它，通过情绪去更多地了解自己，然后才可能对情绪做出调整。 　　“对一些网友来说，经常使用‘emo’这个词可能是寻求情感上的共鸣，也可能是寻求别人对自己情绪的关注，增加跟其他人交流中共性的东西。”宋广文解释。 　　但他提到，无论积极情绪还是消极情绪，都有感染性或辐射性。比如一个家庭有五口人，有四个人的情绪很低落，那么其余人也容易被这种消极的“场效应”影响，高兴不起来。 　　基于此，宋广文认为，人要有一种对自我需要的全面了解，调节自身需求，学会“知足常乐”，不为小事纠结，降低负面情绪产生的可能性，保持阳光的心态，同时把快乐带给别人。 　　另外，在感觉负面情绪较多时，可以找朋友聊天，及时将不良情绪倾诉出来；听一听和缓的音乐、放松心情，“或者适当参加体育活动等，找到适合自己的排解方式。”他说。','9fc3825a774355f5de6c1f98915bb20005c0adee255ee62e2849be1a364f9248','2026-05-05 11:42:50','2026-05-05 11:42:50'),(2,2,'在进入冬季的时候，有很多人的手脚部位总是会出现干裂、起皮的现象。严重时，还会出现明显的裂口，并伴有一定的疼痛感。 有很多人认为，出现这种现象的原因，是由于手脚部位的皮肤过度干燥导致，这是真的吗？下面，就给大家详细介绍一下，希望引起这类人群的警惕。 冬季手脚干裂起皮的原因有哪些？ 一、感染真菌 手脚部位感染上真菌之后，就很容易出现去皮、干裂等现象。比如在足部感染了红色毛癣菌的时候，就会引起皮肤真菌感染，从而患上足癣，患者的双脚部位会出现一些水疱，或者是脱屑以及瘙痒现象。 有些患者也会出现皮肤角化鳞屑以及起皮、开裂、干燥等症状。而如果手部感染毛癣菌的话，也会引起手癣的出现，从而导致患者的手部出现一些水疱，或者是出现过度角化性皮损以及脱屑、干裂等现象。 二、湿疹 湿疹是一种慢性炎症性的皮肤疾病，好发于手部、脚部，以及面部、颈部、背部等部位，发病率非常的高。 一旦患上湿疹，患者的患病部位就会出现一些丘疹或者是水疱，并且还会有着明显的疼痛感，如果出现感染，就会形成一些脓疱，而一旦转成慢性湿疹； 患者的皮损部位会出现一些脱屑，以及皮肤粗糙、皲裂等现象，并且还会伴有程度不同的瘙痒感。 三、皲裂症 皲裂症也被称为手足皲裂，指的是手部和脚部的皮肤，由于各种因素刺激，皮下汗腺的分泌会大量减少，导致皮肤过度干燥，皮肤的角质层增厚并且失去弹性的现象。 气温较低的冬季是皲裂症的高发季节，妇女和老年人群最为多见。一旦患上皲裂症，患者的手部和脚部的皮肤就会出现开裂、起皮、皮肤异常增厚现象。 四、神经性皮炎 在患有神经性皮炎之后，患者的手脚部位也会出现开裂、起皮等现象，是一种因为精神神经因素从而引起的皮肤疾病。 一旦患病，在患者的背部、颈部、腰部以及手脚、四肢、头部等各个部位，都会出现非常剧烈的瘙痒感。 而随着皮肤被患者挠抓，就会发生典型的苔藓样改变。并且会伴有皮肤增厚、过度干燥以及色素沉着和开裂等现象。 五、缺乏维生素 在进入冬季之后，有很多人不喜欢吃一些蔬菜和水果，这样一来，就会使身体内缺乏大量的维生素。 一旦体内缺乏维生素，就会引起一系列皮肤问题，比如皮肤容易开裂、脱皮等现象。 比如在缺乏维生素a的时候，皮肤组织细胞就会过度干燥，从而出现角质层增厚以及皮脂腺萎缩现象，就会引起较为明显的手脚开裂、起皮症状。 如果缺乏维生素E和维生素B族时，也会出现这种现象，并且很容易患上过敏性皮炎。 总而言之，如果进入冬季之后，手脚部位经常出现开裂、起皮现象的时候，一定要引起警惕，一般与以上5种因素有关。患者需要前往正规医院就诊，然后根据病因给予相对应治疗。 除此之外，患者必须做好手脚部位皮肤的卫生工作，每天晚上可用温热水浸泡10分钟左右并擦拭干净，涂抹温和的护手霜或护手油。 还应该适当的多补充一些水分，并且多吃一些蔬菜、水果等食物。对于手脚部位皮肤开裂脱皮现象，有着一定的改善作用。','436df90cca23d09b19a893af789a233f8b8f4cd10a4e5f99257f0bdd11b4bbb6','2026-05-05 11:42:51','2026-05-05 11:42:51'),(3,3,'三款茶饮清湿热、健脾祛湿养心神 茯苓薏莲茶 配方：茯苓、薏苡仁、莲子。 做法：材料洗净后浸泡10分钟，开火煮沸15分钟，取清汤分次代茶饮。 功效：茯苓健脾利湿，薏苡仁渗湿健脾，莲子养心安神。适用于脾虚湿重导致的困倦、食欲缺乏、烦躁。 藿佩陈皮茶 配方：藿香、佩兰、陈皮。 做法：沸水冲泡代茶饮，每日1 3杯。 功效：藿香解暑化湿，佩兰清热和中，陈皮理气健脾，适合湿热内蕴、口黏苔腻、水肿痰多者。脾胃虚寒者需减少用量。 菊花佩兰茶 配方：菊花、佩兰、绿茶。 做法：沸水冲泡10分钟后饮用。 功效：菊花疏风清热解毒，佩兰化湿解暑，绿茶辅助清热。适合暑热伤津、口苦咽干、头目昏沉者。阳虚体质者慎用。 以上三种茶饮可交替配合饮用，如茯苓薏莲茶与藿佩陈皮茶，加强祛湿效果；茯苓薏莲茶与菊花佩兰茶，解表清里，内外兼治。','bf439ea2f2e7a1b26c0292448e6b8b81ca1b515b36e73ad4c3e52bc07635a5b2','2026-05-05 11:42:51','2026-05-05 11:42:51'),(4,4,'亚健康睡眠紊乱状态是由心理、生理等多方面因素的作用导致，与生活方式、工作节奏和社会压力密切相关，好发人群为30 50岁的已婚人士、脑力劳动者、企事业及医疗卫生工作者、本科学历及中级职称者。 中医调理亚健康睡眠紊乱状态以“调和营卫、安神定志”为原则，尽早干预，以主动调节为主，联合心理疏导、食疗、足浴、耳穴、艾灸、针刺、按摩、拔罐等非药物疗法，对于持续时间较长的亚健康人群，可采用多种中医药治疗方法联合干预的方式，以改善亚健康睡眠紊乱状态，恢复正常睡眠，促进整体健康。 创造良好睡眠环境 环境舒适、光线暗淡、温度适宜、没有噪音的睡眠环境是改善睡眠的必要准备。 培养良好睡眠习惯 安排合理规律的作息时间，不在卧室及床上从事与睡眠无关的活动，无论夜间睡眠质量如何，早上按时起床，白天不卧床、不补眠，调节身体昼夜节律与自然统一。 放松训练 睡前进行简单的身体拉伸，听轻松柔和的音乐，有意识地放空思绪，将注意力放在心跳、呼吸、肢体感受上。 刺激控制 日间适当增加体育活动，睡前避免进行刺激性活动，忌饮咖啡、茶、可乐等兴奋性饮品，晚餐不宜过迟、过饱、进食刺激性或难消化食物。','b61ee6996e803757e720730d4583c6930826911de593130664691ec84b41a880','2026-05-05 11:42:51','2026-05-05 11:42:51'),(5,5,'8小时睡眠论可能是错的！盲目追求睡够8小时，或许会产生巨大压力 你是不是每天晚上都在数羊，希望能早点入睡？你是不是每天早上都在拼命按闹钟，希望能多睡一会儿？你是不是觉得每天晚上要睡足8个小时才能精神抖擞？这叫“8小时睡眠论”，听起来挺有道理的。可是，你知道吗，这个说法其实不一定对。 有些人可能需要多睡一会儿，有些人可能少睡一点就够了。这都是因为每个人的身体和习惯都不一样。有个专家叫尼克·利特尔黑尔斯，他写了本书叫《睡眠革命》，他说，“8小时只是一个平均数，不是一个标准。如果你非要硬着头皮去追求8小时的话，反而会给自己增加压力，影响你的睡眠质量。” 所以呢，我们应该听从自己的生物钟，找到适合自己的作息时间。别老担心自己是否达到了“标准”的睡眠时长。还有其他专家也说过，“8小时睡眠论”并没有什么科学依据。比如美国哈佛大学医学院教授丹尼尔·科恩就说过，“我们没有证据证明每个人都需要每天晚上连续7 8个小时的睡眠。”他觉得分段式或多项式的睡眠模式可能更适合我们。 总之呢，我们要根据自己的身体和感觉来安排自己的睡眠时间和质量，并且保持良好和规律的生活习惯。如果你觉得6小时就够了，那就别勉强自己再多躺一会儿；如果你觉得需要多休息一下，那也没什么不好意思的。记住，“8小时睡眠论”只是一个说法，并不是铁律。','9b185ef46816cafc1ab85a5d1d0de99dc911d62fa51eaaae26f41877597bfcd4','2026-05-05 11:42:51','2026-05-05 11:42:51');
+/*!40000 ALTER TABLE `medical_news_content` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `medicine`
 --
 
@@ -178,8 +247,9 @@ CREATE TABLE `medicine` (
   `medicine_price` decimal(10,2) DEFAULT NULL COMMENT '药的价格',
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  PRIMARY KEY (`id`) USING BTREE,
+  FULLTEXT KEY `ft_medicine_rag` (`medicine_name`,`keyword`,`medicine_effect`,`medicine_brand`,`interaction`,`taboo`,`us_age`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -204,7 +274,7 @@ CREATE TABLE `pageview` (
   `pageviews` int DEFAULT NULL COMMENT '浏览量',
   `illness_id` int DEFAULT NULL COMMENT '病的id',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -213,7 +283,7 @@ CREATE TABLE `pageview` (
 
 LOCK TABLES `pageview` WRITE;
 /*!40000 ALTER TABLE `pageview` DISABLE KEYS */;
-INSERT INTO `pageview` VALUES (5,11,1),(6,15,13),(7,2,4),(8,1,2),(9,1,3),(10,1,5),(11,1,6),(12,2,7),(13,1,8),(14,7,9),(15,1,15);
+INSERT INTO `pageview` VALUES (5,15,1),(6,75,13),(7,4,4),(8,6,2),(9,4,3),(10,3,5),(11,3,6),(12,5,7),(13,11,8),(14,14,9),(15,1,15),(16,1,16),(17,1,17);
 /*!40000 ALTER TABLE `pageview` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -232,7 +302,8 @@ CREATE TABLE `science_video` (
   `link` varchar(500) NOT NULL COMMENT '视频链接',
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  FULLTEXT KEY `ft_science_video_rag` (`title`,`description`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -242,7 +313,7 @@ CREATE TABLE `science_video` (
 
 LOCK TABLES `science_video` WRITE;
 /*!40000 ALTER TABLE `science_video` DISABLE KEYS */;
-INSERT INTO `science_video` VALUES (1,'用药安全科普','讲解常见药物使用误区','https://img-zzy.oss-cn-beijing.aliyuncs.com/smart-medicine/images/1673f7cb761a4105a0acd74378b4e389.jpg','https://img-zzy.oss-cn-beijing.aliyuncs.com/4/658bc7e0c3c649ea8fd3ceb635c4794d.mp4','2025-10-22 19:05:53','2025-12-05 20:04:52'),(2,'七步洗手法','洗干净手','https://img-zzy.oss-cn-beijing.aliyuncs.com/smart-medicine/images/cdd9dbbf3f294bbaaff3362e852ce74b.jpg','https://img-zzy.oss-cn-beijing.aliyuncs.com/4/2c24c9b82e36416abcee9e7980229c14.mp4','2025-10-22 19:11:57','2025-12-05 07:22:17');
+INSERT INTO `science_video` VALUES (1,'用药安全科普','讲解常见药物使用误区','https://img-zzy.oss-cn-beijing.aliyuncs.com/smart-medicine/images/1673f7cb761a4105a0acd74378b4e389.jpg','https://img-zzy.oss-cn-beijing.aliyuncs.com/4/658bc7e0c3c649ea8fd3ceb635c4794d.mp4','2025-10-22 19:05:53','2025-12-05 20:04:52'),(2,'七步洗手法','洗干净手','https://img-zzy.oss-cn-beijing.aliyuncs.com/smart-medicine/images/850d70272dd547deb5336d00ecd832d9.png','https://img-zzy.oss-cn-beijing.aliyuncs.com/4/2c24c9b82e36416abcee9e7980229c14.mp4','2025-10-22 19:11:57','2025-12-15 03:07:13');
 /*!40000 ALTER TABLE `science_video` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -268,7 +339,7 @@ CREATE TABLE `user` (
   `update_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`),
   KEY `create_time` (`create_time`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -277,7 +348,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'admin','admin','$2a$10$HJq8gJC0yrkkkDg9hyIUWO7kXeHY5qpMzUWqliRFv0vGXlzoZZWbq',23,'男','2545946621@qq.com','18155441812',1,'https://img-zzy.oss-cn-beijing.aliyuncs.com/smart-medicine/images/dcdd2705b7104c208a2c1707278f05b2.jpg','2025-10-22 19:14:29','2025-12-04 17:46:25'),(18,'zhangsan','zhangsan','$2a$10$sM4ADVlcq64XiJ2Bsv/LUOUmYrBOTaBJ8QCqlNjBX5W0g11GS2eq.',NULL,NULL,'3431835539@qq.com',NULL,0,NULL,'2025-12-04 12:55:06','2025-12-04 12:55:06');
+INSERT INTO `user` VALUES (1,'admin','admin','$2a$10$HJq8gJC0yrkkkDg9hyIUWO7kXeHY5qpMzUWqliRFv0vGXlzoZZWbq',23,'男','2545946621@qq.com','18155441812',1,'https://img-zzy.oss-cn-beijing.aliyuncs.com/smart-medicine/images/dcdd2705b7104c208a2c1707278f05b2.jpg','2025-10-22 19:14:29','2026-02-20 12:23:39'),(19,'11111111','456','$2a$10$hEYyH9AYFxMdhHdncztiDOVhhiI6oipDtnABUFSXif7OxXQIVPMyy',NULL,NULL,'3352103660@qq.com',NULL,0,NULL,'2026-03-11 13:43:02','2026-03-11 13:43:02');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -290,4 +361,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-10 15:32:32
+-- Dump completed on 2026-05-09 22:23:25

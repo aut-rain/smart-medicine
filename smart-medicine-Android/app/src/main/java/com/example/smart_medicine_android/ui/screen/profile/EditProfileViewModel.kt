@@ -117,10 +117,12 @@ class EditProfileViewModel(
 
             val result = userRepository.updateProfile(request)
 
-            result.onSuccess {
+            result.onSuccess { updatedUserInfo ->
                 _uiState.value = _uiState.value.copy(
                     isSaving = false,
-                    saveSuccess = true
+                    saveSuccess = true,
+                    userInfo = updatedUserInfo,
+                    uploadedAvatarUrl = null
                 )
             }.onFailure { error ->
                 _uiState.value = _uiState.value.copy(

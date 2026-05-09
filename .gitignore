@@ -180,3 +180,5 @@ javadoc/
 # Claude Code
 /.claude/
 .mcp.json
+/.codex/
+/.agents/

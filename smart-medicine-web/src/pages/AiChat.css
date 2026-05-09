@@ -275,7 +275,6 @@
     position: relative;
     word-wrap: break-word;
     transition: background-color 0.2s ease;
-    white-space: pre-wrap;
     line-height: 1.6;
     font-size: 14px;
     flex: 1;
@@ -310,7 +309,39 @@
 }
 
 .message-bubble p:not(:last-child) {
-    margin-bottom: 10px;
+    margin-bottom: 6px;
+}
+
+.message-bubble ul,
+.message-bubble ol {
+    margin: 6px 0;
+    padding-left: 22px;
+}
+
+.message-bubble li {
+    margin: 2px 0;
+}
+
+.message-bubble li > p {
+    margin: 0;
+}
+
+.message-bubble hr {
+    margin: 8px 0;
+    border: none;
+    border-top: 1px solid #e5e7eb;
+}
+
+.message-bubble a {
+    color: #2563eb;
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(37, 99, 235, 0.35);
+}
+
+.message-bubble a:hover {
+    color: #1d4ed8;
+    border-bottom-color: #1d4ed8;
 }
 
 .message-bubble code {

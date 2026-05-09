@@ -5,6 +5,7 @@ import com.example.smart_medicine_android.data.network.model.ApiException
 import com.example.smart_medicine_android.data.network.model.PasswordUpdateRequest
 import com.example.smart_medicine_android.data.network.model.UserInfo
 import com.example.smart_medicine_android.data.network.model.UserProfileUpdateRequest
+import com.example.smart_medicine_android.di.AppModule
 
 /**
  * 用户仓库
@@ -21,6 +22,7 @@ class UserRepository(
         return try {
             val response = userApi.getCurrentUser()
             if (response.isSuccess) {
+                AppModule.refreshCache()
                 Result.success(response.getDataOrThrow())
             } else {
                 Result.failure(ApiException(response.code ?: "UNKNOWN", response.message ?: "Unknown error"))
@@ -39,6 +41,7 @@ class UserRepository(
         return try {
             val response = userApi.updateProfile(request)
             if (response.isSuccess) {
+                AppModule.refreshCache()
                 Result.success(response.getDataOrThrow())
             } else {
                 Result.failure(ApiException(response.code ?: "UNKNOWN", response.message ?: "Unknown error"))

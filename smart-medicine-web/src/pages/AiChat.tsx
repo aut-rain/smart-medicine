@@ -12,6 +12,52 @@ interface ChatMsg {
     content: string
 }
 
+const linkEvidenceMarkers = (text: string) => {
+    const markerLinks = new Map<string, string>()
+    const markdownLinkPattern = /\[(【资料\d+】)\]\((\/(?:illness|medicine|science-video|news)\/\d+)\)/g
+    let match: RegExpExecArray | null
+
+    while ((match = markdownLinkPattern.exec(text)) !== null) {
+        markerLinks.set(match[1], match[2])
+    }
+
+    if (markerLinks.size === 0) {
+        return text
+    }
+
+    return text.replace(/(?<!\[)(【资料\d+】)(?!\]\()/g, (marker) => {
+        const url = markerLinks.get(marker)
+        return url ? `[${marker}](${url})` : marker
+    })
+}
+
+const normalizeAssistantText = (text: string) => {
+    let inCodeFence = false
+
+    const normalizedText = text
+        .replace(/\r\n/g, '\n')
+        .replace(/\n{3,}/g, '\n\n')
+        .split('\n')
+        .map((line) => {
+            if (line.trim().startsWith('```')) {
+                inCodeFence = !inCodeFence
+                return line
+            }
+            if (inCodeFence) {
+                return line
+            }
+
+            return line
+                .replace(/^(\s{0,3}#{1,6})([^\s#])/u, '$1 $2')
+                .replace(/^(\s*\d+\.)([^\s])/u, '$1 $2')
+                .replace(/^(\s*[-*+])(\S)/u, '$1 $2')
+                .replace(/^(\s*>)([^\s])/u, '$1 $2')
+        })
+        .join('\n')
+
+    return linkEvidenceMarkers(normalizedText)
+}
+
 export default function AiChat() {
     const [conversationId, setConversationId] = useState<string>('')
     const [messages, setMessages] = useState<ChatMsg[]>([])
@@ -206,7 +252,7 @@ export default function AiChat() {
                                         <div className="message-bubble">
                                             {msg.content ? (
                                                 <Streamdown isAnimating={loading && msg.role === 'assistant'}>
-                                                    {msg.content}
+                                                    {normalizeAssistantText(msg.content)}
                                                 </Streamdown>
                                             ) : (
                                                 <div className="typing-indicator">

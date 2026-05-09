@@ -25,6 +25,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.smart_medicine_android.ui.theme.*
 
 /**
@@ -42,10 +45,17 @@ fun ProfileScreen(
     viewModel: ProfileViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    LaunchedEffect(lifecycleOwner, viewModel) {
+        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            viewModel.refreshUserInfo()
+        }
+    }
 
     // 监听登出成功
-    LaunchedEffect(uiState.isLoggedIn) {
-        if (!uiState.isLoggedIn && !uiState.isLoading) {
+    LaunchedEffect(uiState.hasCheckedLogin, uiState.isLoggedIn, uiState.isLoading) {
+        if (uiState.hasCheckedLogin && !uiState.isLoggedIn && !uiState.isLoading) {
             onLogout()
         }
     }

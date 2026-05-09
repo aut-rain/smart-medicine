@@ -53,17 +53,20 @@ export const aiChatService = {
 
                 // console.log('buffer:', JSON.stringify(buffer));//打印
 
-                const messages = buffer.split('\n\n')
+                const messages = buffer.split(/\r?\n\r?\n/)
                 buffer = messages.pop() || ''
 
                 for (const msg of messages) {
-                    if (msg.startsWith('data:')) {
-                        const payload = msg.slice(5)
+                    const dataLines = msg
+                        .split(/\r?\n/)
+                        .filter((line) => line.startsWith('data:'))
+                        .map((line) => line.slice(5).replace(/^ /, ''))
+
+                    if (dataLines.length > 0) {
+                        const payload = dataLines.join('\n')
                         if (payload === '[DONE]') return
                         if (payload) {
-                            const restoredPayload = payload.replace(/\ndata:/g, '\n')
-                            // const restoredPayload = "|\n|------"
-                            onChunk(restoredPayload)
+                            onChunk(payload)
                         }
                     }
                 }
