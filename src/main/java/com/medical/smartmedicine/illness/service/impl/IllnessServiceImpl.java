@@ -120,6 +120,7 @@ public class IllnessServiceImpl implements IllnessService {
         } catch (Exception e) {
             log.warn("增加浏览量失败: illnessId={}", id, e);
         }
+        Integer pageviews = getPageviews(id);
         
         // 添加历史记录（异步处理，不影响主流程）
         try {
@@ -149,6 +150,7 @@ public class IllnessServiceImpl implements IllnessService {
                 .includeReason(illness.getIncludeReason())
                 .illnessSymptom(illness.getIllnessSymptom())
                 .specialSymptom(illness.getSpecialSymptom())
+                .pageviews(pageviews)
                 .medicines(medicines)
                 .build();
     }
@@ -257,8 +259,19 @@ public class IllnessServiceImpl implements IllnessService {
                 vo.setKindName(kind.getName());
             }
         }
+        vo.setPageviews(getPageviews(illness.getId()));
         
         return vo;
+    }
+
+    /**
+     * 获取疾病浏览量；没有统计记录时返回0。
+     */
+    private Integer getPageviews(Integer illnessId) {
+        LambdaQueryWrapper<Pageview> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Pageview::getIllnessId, illnessId);
+        Pageview pageview = pageviewMapper.selectOne(wrapper);
+        return pageview != null && pageview.getPageviews() != null ? pageview.getPageviews() : 0;
     }
 
     @Override

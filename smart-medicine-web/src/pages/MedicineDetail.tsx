@@ -1,4 +1,4 @@
-import { Button, Card, Col, Descriptions, Divider, Image, Row, Space, Typography, message } from 'antd'
+import { Card, Col, Descriptions, Divider, Image, Row, Space, Typography, message } from 'antd'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { medicineService } from '@/services/medicineService'
@@ -110,13 +110,6 @@ export default function MedicineDetail() {
                 </Typography.Paragraph>
               </Card>
 
-              <Divider />
-
-              {/* 操作按钮 */}
-              <Space>
-                <Button type="primary">收藏药品</Button>
-                <Button>分享</Button>
-              </Space>
             </Space>
           )}
         </Card>

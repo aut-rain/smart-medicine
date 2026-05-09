@@ -1,5 +1,5 @@
 import { Card, Descriptions, Divider, List, Space, Typography } from 'antd'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { illnessService } from '@/services/illnessService'
 import { medicineService } from '@/services/medicineService'
@@ -13,9 +13,12 @@ export default function IllnessDetail() {
   const [detail, setDetail] = useState<any>(null)
   const [medicines, setMedicines] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
+  const requestedDetailIdRef = useRef<string | null>(null)
 
   useEffect(() => {
     if (!id) return
+    if (requestedDetailIdRef.current === id) return
+    requestedDetailIdRef.current = id
     setLoading(true)
     Promise.all([
       illnessService.getDetail(Number(id)),
@@ -58,7 +61,7 @@ export default function IllnessDetail() {
               <Descriptions title="基本信息" bordered>
                 <Descriptions.Item label="疾病名称">{detail.illnessName}</Descriptions.Item>
                 <Descriptions.Item label="所属分类">{detail.category?.name || '未知'}</Descriptions.Item>
-                <Descriptions.Item label="浏览量">{detail.pageviews}</Descriptions.Item>
+                <Descriptions.Item label="浏览量">{detail.pageviews ?? 0}</Descriptions.Item>
               </Descriptions>
 
               <Divider />
