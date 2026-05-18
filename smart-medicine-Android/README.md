@@ -61,7 +61,7 @@ cd smart-medicine/smart-medicine-Android
 ```kotlin
 fun getBaseUrl(): String {
     // 开发环境
-    return "http://10.0.2.2:8080"  // 模拟器默认IP
+    return "http://11.0.2.2:8080"  // 模拟器默认IP
     // 或使用 "http://localhost:8080"  // 真机
 }
 ```

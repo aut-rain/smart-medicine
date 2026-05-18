@@ -43,5 +43,5 @@ knife4j:
     language: zh_cn
   basic:
     enable: true
-    username: zzy
-    password: Zhu20030901
+    username: admin
+    password: admin

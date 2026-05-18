@@ -51,7 +51,7 @@ object ApiConfig {
      * 10.0.2.2 是 Android 模拟器访问宿主机的特殊地址
      * 如果使用真机调试，请替换为电脑的局域网 IP（如 192.168.1.100）
      */
-    private const val DEV_BASE_URL = "http://10.0.2.2:7070/"
+    private const val DEV_BASE_URL = "http://11.0.2.2:7070/"
 
     /**
      * 预发布环境 BaseUrl
