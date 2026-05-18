@@ -1,7 +1,7 @@
 # 智慧医疗系统
 
 <div align="center">
-**一个现代化的全栈智慧医疗健康管理平台**
+<b>一个现代化的全栈智慧医疗健康管理平台</b>
 
 ![LICENSE](https://img.shields.io/badge/License-MIT-yellow.svg)
 
@@ -229,7 +229,7 @@ npm run build
 
 ## 📄 许可证
 
-本项目采用 MIT 许可证
+本项目采用 [MIT 许可证](LICENSE)
 
 
 ## 👥 作者
@@ -247,6 +247,6 @@ zzy
 
 
 <div align="center">
-**⭐ 如果觉得这个项目有帮助，请点个 Star ⭐**
+<b>⭐ 如果觉得这个项目有帮助，请点个 Star ⭐</b>
 
 </div>
