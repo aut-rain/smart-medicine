@@ -244,6 +244,8 @@ zzy
 - [Jetpack Compose](https://developer.android.com/jetpack/compose)
 - [Ant Design](https://ant.design/)
 - [阿里云通义千问](https://tongyi.aliyun.com/)
+- **学长: zxz**
+- **老师: lx**
 
 
 <div align="center">
